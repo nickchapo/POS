@@ -2,7 +2,9 @@ import uvicorn
 from fastapi import FastAPI
 
 from app.infra.fastapi.products import router as product_api
+from app.infra.fastapi.shifts import router as shift_api
 from app.infra.sqlite.products import ProductSQLite
+from app.infra.sqlite.shifts import ShiftSQLite
 
 POS_DB = "pos.db"
 
@@ -10,7 +12,9 @@ POS_DB = "pos.db"
 def create_app() -> FastAPI:
     app = FastAPI()
     app.include_router(product_api)
+    app.include_router(shift_api)
     app.state.products = ProductSQLite(POS_DB)
+    app.state.shifts = ShiftSQLite(POS_DB)
     return app
 
 

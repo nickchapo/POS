@@ -28,3 +28,10 @@ class ReceiptClosedError(AppError):
         self.receipt_id = receipt_id
         message = f"Receipt with id <{receipt_id}> is closed."
         super().__init__(message)
+
+
+class ShiftClosedError(AppError):
+    def __init__(self, shift_id: str) -> None:
+        self.shift_id = shift_id
+        message = f"Shift with id <{shift_id}> is already closed."
+        super().__init__(message)
