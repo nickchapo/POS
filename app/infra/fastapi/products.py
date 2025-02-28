@@ -1,10 +1,11 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+
 from app.infra.core.errors import DoesNotExistError, ExistsError
 from app.infra.core.products import Product, ProductRepository
 from app.infra.fastapi.dependables import get_product_repository
-from pydantic import BaseModel
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
@@ -44,7 +45,7 @@ def create_product(
         request: ProductCreateRequest,
         repo: ProductRepository = Depends(get_product_repository),
 ) -> ProductResponse:
-    product = Product(**request.dict())
+    product = Product(**request.model_dump())
     try:
         repo.add(product)
     except ExistsError as e:
@@ -79,7 +80,7 @@ def update_product(
         product_id: UUID,
         request: ProductUpdateRequest,
         repo: ProductRepository = Depends(get_product_repository),
-):
+) -> dict[str, str]:
     try:
         repo.update_price(product_id, request.price)
     except DoesNotExistError as e:

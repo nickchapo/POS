@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, cast
 
 from fastapi import Depends, Request
 
@@ -7,11 +7,11 @@ from app.infra.core.shifts import ShiftRepository
 
 
 def get_product_repository(request: Request) -> ProductRepository:
-    return request.app.state.products
+    return cast(ProductRepository, request.app.state.products)
 
 
 def get_shift_repository(request: Request) -> ShiftRepository:
-    return request.app.state.shifts
+    return cast(ShiftRepository, request.app.state.shifts)
 
 
 ProductRepositoryDependable = Annotated[
