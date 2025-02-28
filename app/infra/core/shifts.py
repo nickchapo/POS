@@ -7,7 +7,7 @@ from uuid import UUID, uuid4
 @dataclass
 class Shift:
     id: UUID = field(default_factory=uuid4)
-    open_at: datetime = field(default_factory=datetime.now(timezone.utc))
+    open_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     closed_at: Optional[datetime] = None
 
 

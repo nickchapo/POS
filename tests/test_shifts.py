@@ -13,12 +13,12 @@ from app.infra.sqlite.shifts import ShiftSQLite
 
 
 @pytest.fixture
-def repo():
+def repo() -> ShiftSQLite:
     repository = ShiftSQLite(":memory:")
     return repository
 
 
-def test_open_shift(repo):
+def test_open_shift(repo: ShiftSQLite) -> None:
     shift = repo.open_shift()
     assert isinstance(shift.id, UUID)
     assert isinstance(shift.open_at, datetime)
@@ -30,7 +30,7 @@ def test_open_shift(repo):
     assert shift_from_db.closed_at is None
 
 
-def test_close_shift(repo):
+def test_close_shift(repo: ShiftSQLite) -> None:
     shift = repo.open_shift()
     repo.close_shift(shift.id)
     closed_shift = repo.read(shift.id)
@@ -40,7 +40,7 @@ def test_close_shift(repo):
         repo.close_shift(shift.id)
 
 
-def test_read_nonexistent_shift(repo):
+def test_read_nonexistent_shift(repo: ShiftSQLite) -> None:
     non_existent_id = uuid.uuid4()
     with pytest.raises(DoesNotExistError):
         repo.read(non_existent_id)
@@ -49,11 +49,11 @@ def test_read_nonexistent_shift(repo):
 # endpoints
 
 @pytest.fixture
-def app():
+def app() -> FastAPI:
     app = FastAPI()
     test_repo = ShiftSQLite(":memory:")
 
-    def get_test_repo():
+    def get_test_repo() -> ShiftSQLite:
         return test_repo
 
     app.dependency_overrides[get_shift_repository] = get_test_repo
@@ -62,11 +62,11 @@ def app():
 
 
 @pytest.fixture
-def client(app):
+def client(app: FastAPI) -> TestClient:
     return TestClient(app)
 
 
-def test_open_shift_endpoint(client):
+def test_open_shift_endpoint(client: TestClient) -> None:
     response = client.post("/shifts")
     assert response.status_code == 201
     data = response.json()
@@ -75,7 +75,7 @@ def test_open_shift_endpoint(client):
     assert data["closed_at"] is None
 
 
-def test_get_shift_endpoint(client):
+def test_get_shift_endpoint(client: TestClient) -> None:
     open_resp = client.post("/shifts")
     assert open_resp.status_code == 201
     shift_data = open_resp.json()
@@ -89,13 +89,13 @@ def test_get_shift_endpoint(client):
     assert retrieved["closed_at"] == shift_data["closed_at"]
 
 
-def test_get_shift_not_found(client):
+def test_get_shift_not_found(client: TestClient) -> None:
     non_existent_id = str(uuid.uuid4())
     response = client.get(f"/shifts/{non_existent_id}")
     assert response.status_code == 404
 
 
-def test_close_shift_endpoint(client):
+def test_close_shift_endpoint(client: TestClient) -> None:
     open_resp = client.post("/shifts")
     assert open_resp.status_code == 201
     shift_data = open_resp.json()
@@ -108,7 +108,7 @@ def test_close_shift_endpoint(client):
     assert closed_data["closed_at"] is not None
 
 
-def test_close_shift_already_closed(client):
+def test_close_shift_already_closed(client: TestClient) -> None:
     open_resp = client.post("/shifts")
     assert open_resp.status_code == 201
     shift_id = open_resp.json()["id"]
@@ -120,7 +120,7 @@ def test_close_shift_already_closed(client):
     assert second_close.status_code == 400
 
 
-def test_close_shift_not_found(client):
+def test_close_shift_not_found(client: TestClient) -> None:
     non_existent_id = str(uuid.uuid4())
     response = client.patch(f"/shifts/{non_existent_id}/close")
     assert response.status_code == 404

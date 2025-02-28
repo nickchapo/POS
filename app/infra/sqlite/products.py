@@ -33,7 +33,8 @@ class ProductSQLite(ProductRepository):
         try:
             with self.connection:
                 self.connection.execute(
-                    "INSERT INTO products (id, name, barcode, price) VALUES (?, ?, ?, ?)",
+                    "INSERT INTO products (id, name, barcode, price)"
+                    " VALUES (?, ?, ?, ?)",
                     (str(product.id), product.name, product.barcode, product.price),
                 )
         except sqlite3.IntegrityError as e:
