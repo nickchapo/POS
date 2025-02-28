@@ -44,7 +44,7 @@ def create_product(
         request: ProductCreateRequest,
         repo: ProductRepository = Depends(get_product_repository),
 ) -> ProductResponse:
-    product = Product(**request.dict())
+    product = Product(**request.model_dump())
     try:
         repo.add(product)
     except ExistsError as e:
