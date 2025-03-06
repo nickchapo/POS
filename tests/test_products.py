@@ -37,6 +37,18 @@ def client(app: FastAPI) -> TestClient:
 
 # repo tests
 
+def test_product_exists_true(repo: ProductSQLite) -> None:
+    product_id = uuid.uuid4()
+    product = Product(id=product_id, name="Test Product", barcode="123456", price=10.0)
+    repo.add(product)
+    assert repo.exists(product_id) is True
+
+
+def test_product_exists_false(repo: ProductSQLite):
+    non_existing_id = uuid.uuid4()
+    assert repo.exists(non_existing_id) is False
+
+
 def test_add_and_read_product(repo: ProductSQLite) -> None:
     product_id = uuid.uuid4()
     product = Product(id=product_id, name="Test Product", barcode="123456", price=10.0)
