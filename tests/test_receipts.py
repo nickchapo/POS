@@ -1,3 +1,4 @@
+import sqlite3
 import uuid
 
 import pytest
@@ -6,25 +7,30 @@ from fastapi.testclient import TestClient
 
 from app.infra.core.entity.receipt import Receipt
 from app.infra.core.errors import DoesNotExistError
-from app.infra.fastapi.dependables import get_receipt_repository
+from app.infra.core.products import Product
+from app.infra.fastapi.dependables import get_receipt_repository, get_product_repository
 from app.infra.fastapi.receipts import router
+from app.infra.sqlite.products import ProductSQLite
 from app.infra.sqlite.receipt_repository import ReceiptSqlLite
 
 
 @pytest.fixture
-def repo() -> ReceiptSqlLite:
-    repository = ReceiptSqlLite(":memory:")
+def product_repo() -> ProductSQLite:
+    repository = ProductSQLite(":memory:")
     return repository
 
 
 @pytest.fixture
-def app(repo: ReceiptSqlLite) -> FastAPI:
+def receipt_repo(product_repo: ProductSQLite) -> ReceiptSqlLite:
+    repository = ReceiptSqlLite(":memory:", product_repo=product_repo)
+    return repository
+
+
+@pytest.fixture
+def app(receipt_repo: ReceiptSqlLite, product_repo: ProductSQLite) -> FastAPI:
     app = FastAPI()
-
-    def get_test_repo() -> ReceiptSqlLite:
-        return repo
-
-    app.dependency_overrides[get_receipt_repository] = get_test_repo
+    app.dependency_overrides[get_receipt_repository] = lambda: receipt_repo
+    app.dependency_overrides[get_product_repository] = lambda: product_repo
     app.include_router(router)
     return app
 
@@ -36,31 +42,72 @@ def client(app: FastAPI) -> TestClient:
 
 # repo tests
 
-def test_add_and_get_receipt(repo: ReceiptSqlLite):
+def test_add_and_get_receipt(receipt_repo: ReceiptSqlLite):
     receipt = Receipt()
-    repo.add(receipt)
-    retrieved = repo.get(receipt.id)
+    receipt_repo.add(receipt)
+    retrieved = receipt_repo.get(receipt.id)
     assert retrieved.id == receipt.id
 
 
-def test_get_nonexistent_receipt(repo: ReceiptSqlLite):
+def test_get_nonexistent_receipt(receipt_repo: ReceiptSqlLite):
     nonexistent_id = uuid.uuid4()
 
     with pytest.raises(DoesNotExistError):
-        repo.get(nonexistent_id)
+        receipt_repo.get(nonexistent_id)
 
 
-def test_clear_receipts(repo: ReceiptSqlLite):
+def test_clear_receipts(receipt_repo: ReceiptSqlLite):
     receipts = [Receipt() for _ in range(3)]
     for receipt in receipts:
-        repo.add(receipt)
+        receipt_repo.add(receipt)
 
-    repo.clear()
+    receipt_repo.clear()
 
     for receipt in receipts:
         with pytest.raises(DoesNotExistError):
-            repo.get(receipt.id)
+            receipt_repo.get(receipt.id)
 
+
+def test_add_products_and_get_receipt(receipt_repo: ReceiptSqlLite, product_repo: ProductSQLite):
+    receipt = Receipt()
+    receipt_repo.add(receipt)
+
+    product1 = Product(id=uuid.uuid4(), name="Product1", barcode="barcode1", price=10.0)
+    product2 = Product(id=uuid.uuid4(), name="Product2", barcode="barcode2", price=20.0)
+    product_repo.add(product1)
+    product_repo.add(product2)
+
+    receipt_repo.add_product(receipt.id, product1.id)
+    receipt_repo.add_product(receipt.id, product2.id)
+
+    retrieved = receipt_repo.get(receipt.id)
+    product_ids = {p.id for p in retrieved.products}
+    assert len(retrieved.products) == 2
+    assert product1.id in product_ids
+    assert product2.id in product_ids
+
+
+def test_add_duplicate_product(receipt_repo: ReceiptSqlLite, product_repo: ProductSQLite):
+    receipt = Receipt()
+    receipt_repo.add(receipt)
+
+    product = Product(id=uuid.uuid4(), name="Product", barcode="barcode", price=10.0)
+    product_repo.add(product)
+
+    receipt_repo.add_product(receipt.id, product.id)
+
+    with pytest.raises(sqlite3.IntegrityError):
+        receipt_repo.add_product(receipt.id, product.id)
+
+
+def test_add_nonexisting_product(receipt_repo: ReceiptSqlLite):
+    receipt = Receipt()
+    receipt_repo.add(receipt)
+
+    id = uuid.uuid4()
+
+    with pytest.raises(DoesNotExistError):
+        receipt_repo.add_product(receipt.id, id)
 
 # api tests
 
