@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import UUID
 
 from app.infra.core.errors import DoesNotExistError, ShiftClosedError
@@ -25,7 +25,7 @@ class ShiftSQLite(ShiftRepository):
             )
 
     def open_shift(self) -> Shift:
-        new_shift = Shift()
+        new_shift = Shift(open_at=datetime.now(timezone.utc))
         with self.connection:
             self.connection.execute(
                 "INSERT INTO shifts (id, open_at, closed_at) VALUES (?, ?, ?)",
@@ -37,7 +37,7 @@ class ShiftSQLite(ShiftRepository):
         shift = self.read(shift_id)
         if shift.closed_at is not None:
             raise ShiftClosedError(str(shift_id))
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         with self.connection:
             self.connection.execute(
                 "UPDATE shifts SET closed_at = ? WHERE id = ?",
