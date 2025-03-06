@@ -2,9 +2,9 @@ from typing import Annotated, cast
 
 from fastapi import Depends, Request
 
-from app.infra.core.products import ProductRepository
-from app.infra.core.receipts import ReceiptRepository
-from app.infra.core.shifts import ShiftRepository
+from app.infra.core.repository.products import ProductRepository
+from app.infra.core.repository.receipts import ReceiptRepository
+from app.infra.core.repository.shifts import ShiftRepository
 
 
 def get_product_repository(request: Request) -> ProductRepository:

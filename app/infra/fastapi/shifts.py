@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from app.infra.core.errors import DoesNotExistError, ShiftClosedError
-from app.infra.core.shifts import ShiftRepository
+from app.infra.core.repository.shifts import ShiftRepository
 from app.infra.fastapi.dependables import get_shift_repository
 
 router = APIRouter(prefix="/shifts", tags=["Shifts"])

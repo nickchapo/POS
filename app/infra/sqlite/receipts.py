@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Optional
 from uuid import UUID
 
-from app.infra.core.receipts import ReceiptRepository, Receipt
+from app.infra.core.repository.receipts import ReceiptRepository, ReceiptEntity
 
 
 @dataclass
@@ -36,7 +36,7 @@ class ReceiptSqlLite(ReceiptRepository):
                 )
                 return cursor.fetchone() is not None
 
-    def get(self, receipt_id: UUID) -> Receipt | None:
+    def get(self, receipt_id: UUID) -> ReceiptEntity | None:
         with self.connection:
             cursor = self.connection.execute(
                 """
@@ -53,9 +53,9 @@ class ReceiptSqlLite(ReceiptRepository):
 
             product_ids = [row["product_id"] for row in rows if row["product_id"] is not None]
             products = [UUID(pid) for pid in product_ids]
-            return Receipt(id=receipt_id, product_ids=products)
+            return ReceiptEntity(id=receipt_id, product_ids=products)
 
-    def add(self, receipt: Receipt) -> None:
+    def add(self, receipt: ReceiptEntity) -> None:
         with self.connection:
             self.connection.execute(
                 "INSERT INTO receipts (id) VALUES (?)",

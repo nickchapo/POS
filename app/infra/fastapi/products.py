@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from app.infra.core.errors import DoesNotExistError, ExistsError
-from app.infra.core.products import Product, ProductRepository
+from app.infra.core.repository.products import ProductRepository, Product
 from app.infra.fastapi.dependables import get_product_repository
 
 router = APIRouter(prefix="/products", tags=["Products"])

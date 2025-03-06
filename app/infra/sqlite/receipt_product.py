@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 from uuid import UUID
 
-from app.infra.core.receipt_product import ReceiptProductRepository
+from app.infra.core.repository.receipt_product import ReceiptProductRepository
 
 
 @dataclass

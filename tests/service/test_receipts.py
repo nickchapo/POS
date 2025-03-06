@@ -4,7 +4,7 @@ import uuid
 import pytest
 
 from app.infra.core.errors import DoesNotExistError
-from app.infra.core.products import Product
+from app.infra.core.repository.products import Product
 from app.infra.core.service.receipts import ReceiptService
 from app.infra.sqlite.products import ProductSQLite
 from app.infra.sqlite.receipt_product import ReceiptProductSqlLite

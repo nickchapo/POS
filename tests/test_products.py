@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from app.infra.core.errors import DoesNotExistError, ExistsError
-from app.infra.core.products import Product
+from app.infra.core.repository.products import Product
 from app.infra.fastapi.dependables import get_product_repository
 from app.infra.fastapi.products import router
 from app.infra.sqlite.products import ProductSQLite

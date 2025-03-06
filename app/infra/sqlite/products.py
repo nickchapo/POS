@@ -4,7 +4,7 @@ from typing import Optional
 from uuid import UUID
 
 from app.infra.core.errors import DoesNotExistError, ExistsError
-from app.infra.core.products import Product, ProductRepository
+from app.infra.core.repository.products import ProductRepository, Product
 
 
 @dataclass

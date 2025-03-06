@@ -3,9 +3,10 @@ import uuid
 
 import pytest
 
+from app.infra.core.repository.receipts import ReceiptEntity
 from app.infra.sqlite.products import ProductSQLite
 from app.infra.sqlite.receipt_product import ReceiptProductSqlLite
-from app.infra.sqlite.receipts import ReceiptSqlLite, Receipt
+from app.infra.sqlite.receipts import ReceiptSqlLite
 
 
 @pytest.fixture(scope="session")
@@ -41,7 +42,7 @@ def receipt_product_repo(connection: sqlite3.Connection) -> ReceiptProductSqlLit
 
 
 def test_receipt_exists_true(receipt_repo: ReceiptSqlLite):
-    receipt = Receipt()
+    receipt = ReceiptEntity()
     receipt_repo.add(receipt)
     assert receipt_repo.exists(receipt.id) is True
 
@@ -58,14 +59,14 @@ def test_get_nonexistent_receipt(receipt_repo: ReceiptSqlLite):
 
 
 def test_add_and_get_receipt(receipt_repo: ReceiptSqlLite):
-    receipt = Receipt()
+    receipt = ReceiptEntity()
     receipt_repo.add(receipt)
     retrieved = receipt_repo.get(receipt.id)
     assert retrieved.id == receipt.id
 
 
 def test_clear_receipts(receipt_repo: ReceiptSqlLite):
-    receipts = [Receipt() for _ in range(3)]
+    receipts = [ReceiptEntity() for _ in range(3)]
     for receipt in receipts:
         receipt_repo.add(receipt)
 
@@ -77,7 +78,7 @@ def test_clear_receipts(receipt_repo: ReceiptSqlLite):
 
 
 def test_get_with_products(receipt_repo: ReceiptSqlLite, receipt_product_repo: ReceiptProductSqlLite):
-    receipt = Receipt()
+    receipt = ReceiptEntity()
     receipt_repo.add(receipt)
 
     product_id_1 = uuid.uuid4()
