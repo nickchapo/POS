@@ -16,9 +16,10 @@ def create_app() -> FastAPI:
     app.include_router(product_api)
     app.include_router(shift_api)
     app.include_router(receipt_api)
-    app.state.products = ProductSQLite(POS_DB)
+    product_repo = ProductSQLite(POS_DB)
+    app.state.products = product_repo
     app.state.shifts = ShiftSQLite(POS_DB)
-    app.state.receipts = ReceiptSqlLite(POS_DB)
+    app.state.receipts = ReceiptSqlLite(db_name=POS_DB, product_repo=product_repo)
     return app
 
 

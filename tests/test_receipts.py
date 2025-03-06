@@ -5,13 +5,12 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.infra.core.entity.receipt import Receipt
 from app.infra.core.errors import DoesNotExistError
 from app.infra.core.products import Product
 from app.infra.fastapi.dependables import get_receipt_repository, get_product_repository
 from app.infra.fastapi.receipts import router
 from app.infra.sqlite.products import ProductSQLite
-from app.infra.sqlite.receipt_repository import ReceiptSqlLite
+from app.infra.sqlite.receipt_repository import ReceiptSqlLite, Receipt
 
 
 @pytest.fixture

@@ -3,9 +3,8 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
-from app.infra.core.entity.receipt import Receipt
 from app.infra.core.errors import DoesNotExistError, ExistsError
-from app.infra.core.repository.receipt_repository import ReceiptRepository
+from app.infra.core.receipts import Receipt, ReceiptRepository
 from app.infra.fastapi.dependables import get_receipt_repository
 
 router = APIRouter(prefix="/receipts", tags=["Receipts"])

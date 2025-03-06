@@ -2,10 +2,9 @@ import sqlite3
 from dataclasses import dataclass, field
 from uuid import UUID
 
-from app.infra.core.entity.receipt import Receipt
 from app.infra.core.errors import DoesNotExistError
 from app.infra.core.products import ProductRepository
-from app.infra.core.repository.receipt_repository import ReceiptRepository
+from app.infra.core.receipts import ReceiptRepository, Receipt
 
 
 @dataclass
