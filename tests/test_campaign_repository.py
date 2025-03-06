@@ -8,6 +8,7 @@ from ..app.infra.core.campaign import Campaign, CampaignType, DiscountCampaign, 
 from ..app.infra.sqlite.campaign_repository   import CampaignRepository
 
 
+
 class TestCampaignRepository(unittest.TestCase):
     def setUp(self):
         self.conn = sqlite3.connect(":memory:")
