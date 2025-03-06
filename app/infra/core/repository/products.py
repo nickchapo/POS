@@ -20,6 +20,9 @@ class ProductRepository(Protocol):
     def update_price(self, product_id: UUID, price: float) -> None:
         ...
 
+    def update_receipt_id(self, product_id: UUID, receipt_id: UUID) -> None:
+        ...
+
     def clear(self) -> None:
         ...
 

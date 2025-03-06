@@ -94,6 +94,14 @@ def test_update_price(repo: ProductSQLite) -> None:
     assert updated_product.price == new_price
 
 
+def test_update_receipt_id(repo: ProductSQLite) -> None:
+    product_id = uuid.uuid4()
+    receipt_id = uuid.uuid4()
+    product = Product(id=product_id, name="Product", barcode="123", price=10.0)
+    repo.add(product)
+    repo.update_receipt_id(product_id, receipt_id)
+
+
 def test_list_and_clear_products(repo: ProductSQLite) -> None:
     product1 = Product(id=uuid.uuid4(), name="Product1", barcode="barcode1", price=10.0)
     product2 = Product(id=uuid.uuid4(), name="Product2", barcode="barcode2", price=20.0)

@@ -3,9 +3,9 @@ import uuid
 
 import pytest
 
-from app.infra.core.repository.receipts import ReceiptEntity
+from app.infra.core.repository.products import Product
+from app.infra.core.repository.receipts import Receipt
 from app.infra.sqlite.products import ProductSQLite
-from app.infra.sqlite.receipt_product import ReceiptProductSqlLite
 from app.infra.sqlite.receipts import ReceiptSqlLite
 
 
@@ -20,7 +20,6 @@ def connection() -> sqlite3.Connection:
 def init_db(connection: sqlite3.Connection):
     ReceiptSqlLite(connection=connection)
     ProductSQLite(connection=connection)
-    ReceiptProductSqlLite(connection=connection)
 
 
 @pytest.fixture
@@ -35,14 +34,8 @@ def product_repo(connection: sqlite3.Connection) -> ProductSQLite:
     return repository
 
 
-@pytest.fixture
-def receipt_product_repo(connection: sqlite3.Connection) -> ReceiptProductSqlLite:
-    repository = ReceiptProductSqlLite(connection=connection)
-    return repository
-
-
 def test_receipt_exists_true(receipt_repo: ReceiptSqlLite):
-    receipt = ReceiptEntity()
+    receipt = Receipt()
     receipt_repo.add(receipt)
     assert receipt_repo.exists(receipt.id) is True
 
@@ -59,14 +52,14 @@ def test_get_nonexistent_receipt(receipt_repo: ReceiptSqlLite):
 
 
 def test_add_and_get_receipt(receipt_repo: ReceiptSqlLite):
-    receipt = ReceiptEntity()
+    receipt = Receipt()
     receipt_repo.add(receipt)
     retrieved = receipt_repo.get(receipt.id)
     assert retrieved.id == receipt.id
 
 
 def test_clear_receipts(receipt_repo: ReceiptSqlLite):
-    receipts = [ReceiptEntity() for _ in range(3)]
+    receipts = [Receipt() for _ in range(3)]
     for receipt in receipts:
         receipt_repo.add(receipt)
 
@@ -76,17 +69,31 @@ def test_clear_receipts(receipt_repo: ReceiptSqlLite):
         retrieved = receipt_repo.get(receipt.id)
         assert retrieved is None
 
-
-def test_get_with_products(receipt_repo: ReceiptSqlLite, receipt_product_repo: ReceiptProductSqlLite):
-    receipt = ReceiptEntity()
+def test_get_with_products(receipt_repo: ReceiptSqlLite, product_repo: ProductSQLite):
+    receipt = Receipt()
     receipt_repo.add(receipt)
 
-    product_id_1 = uuid.uuid4()
-    product_id_2 = uuid.uuid4()
-    receipt_product_repo.add_receipt_product(receipt.id, product_id_1)
-    receipt_product_repo.add_receipt_product(receipt.id, product_id_2)
+    product1 = Product(id=uuid.uuid4(), name="Product1", barcode="barcode1", price=10.0)
+    product2 = Product(id=uuid.uuid4(), name="Product2", barcode="barcode2", price=20.0)
+    product_repo.add(product1)
+    product_repo.add(product2)
+
+    product_repo.update_receipt_id(product1.id, receipt.id)
+    product_repo.update_receipt_id(product2.id, receipt.id)
 
     retrieved = receipt_repo.get(receipt.id)
-    assert len(retrieved.product_ids) == 2
-    assert product_id_1 in retrieved.product_ids
-    assert product_id_1 in retrieved.product_ids
+
+    product_map = {p.id: p for p in retrieved.products}
+    assert len(product_map) == 2
+
+    prod1 = product_map.get(product1.id)
+    assert prod1 is not None, "Product1 not found in the receipt"
+    assert prod1.name == product1.name, f"Expected name {product1.name}, got {prod1.name}"
+    assert prod1.barcode == product1.barcode, f"Expected barcode {product1.barcode}, got {prod1.barcode}"
+    assert prod1.price == product1.price, f"Expected price {product1.price}, got {prod1.price}"
+
+    prod2 = product_map.get(product2.id)
+    assert prod2 is not None, "Product2 not found in the receipt"
+    assert prod2.name == product2.name, f"Expected name {product2.name}, got {prod2.name}"
+    assert prod2.barcode == product2.barcode, f"Expected barcode {product2.barcode}, got {prod2.barcode}"
+    assert prod2.price == product2.price, f"Expected price {product2.price}, got {prod2.price}"

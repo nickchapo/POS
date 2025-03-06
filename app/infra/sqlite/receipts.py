@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from typing import Optional
 from uuid import UUID
 
-from app.infra.core.repository.receipts import ReceiptRepository, ReceiptEntity
+from app.infra.core.repository.products import Product
+from app.infra.core.repository.receipts import ReceiptRepository, Receipt
 
 
 @dataclass
@@ -36,26 +37,36 @@ class ReceiptSqlLite(ReceiptRepository):
                 )
                 return cursor.fetchone() is not None
 
-    def get(self, receipt_id: UUID) -> ReceiptEntity | None:
-        with self.connection:
-            cursor = self.connection.execute(
-                """
-                SELECT r.id AS receipt_id, rp.product_id
-                FROM receipts r
-                LEFT JOIN receipt_products rp ON r.id = rp.receipt_id
-                WHERE r.id = ?
-                """,
-                (str(receipt_id),)
-            )
-            rows = cursor.fetchall()
-            if not rows:
-                return None
+    def get(self, receipt_id: UUID) -> Receipt | None:
+        query = """
+        SELECT r.id AS receipt_id, 
+               p.id AS product_id, 
+               p.name, 
+               p.barcode, 
+               p.price
+        FROM receipts r
+        LEFT JOIN products p ON r.id = p.receipt_id
+        WHERE r.id = ?
+        """
+        cursor = self.connection.execute(query, (str(receipt_id),))
+        rows = cursor.fetchall()
+        if not rows:
+            return None
 
-            product_ids = [row["product_id"] for row in rows if row["product_id"] is not None]
-            products = [UUID(pid) for pid in product_ids]
-            return ReceiptEntity(id=receipt_id, product_ids=products)
+        products = []
+        for row in rows:
+            if row["product_id"] is not None:
+                product = Product(
+                    id=UUID(row["product_id"]),
+                    name=row["name"],
+                    barcode=row["barcode"],
+                    price=row["price"]
+                )
+                products.append(product)
 
-    def add(self, receipt: ReceiptEntity) -> None:
+        return Receipt(id=UUID(rows[0]["receipt_id"]), products=products)
+
+    def add(self, receipt: Receipt) -> None:
         with self.connection:
             self.connection.execute(
                 "INSERT INTO receipts (id) VALUES (?)",

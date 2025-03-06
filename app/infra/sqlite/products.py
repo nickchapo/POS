@@ -26,7 +26,9 @@ class ProductSQLite(ProductRepository):
                     id TEXT PRIMARY KEY,
                     name TEXT UNIQUE,
                     barcode TEXT UNIQUE,
-                    price REAL
+                    price REAL,
+                    receipt_id TEXT,
+                    FOREIGN KEY (receipt_id) REFERENCES receipts (id)
                 )
                 """
             )
@@ -94,6 +96,14 @@ class ProductSQLite(ProductRepository):
             self.connection.execute(
                 "UPDATE products SET price=? WHERE id=?",
                 (price, str(product_id)),
+            )
+
+    def update_receipt_id(self, product_id: UUID, receipt_id: UUID) -> None:
+        self.read(product_id)
+        with self.connection:
+            self.connection.execute(
+                "UPDATE products SET receipt_id=? WHERE id=?",
+                (str(receipt_id), str(product_id)),
             )
 
     def clear(self) -> None:
