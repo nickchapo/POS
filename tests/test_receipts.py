@@ -6,9 +6,8 @@ from fastapi.testclient import TestClient
 
 from app.infra.core.entity.receipt import Receipt
 from app.infra.core.errors import DoesNotExistError
-from app.infra.fastapi.dependables import get_product_repository
-from app.infra.fastapi.products import router
-from app.infra.sqlite.products import ProductSQLite
+from app.infra.fastapi.dependables import get_receipt_repository
+from app.infra.fastapi.receipts import router
 from app.infra.sqlite.receipt_repository import ReceiptSqlLite
 
 
@@ -19,13 +18,13 @@ def repo() -> ReceiptSqlLite:
 
 
 @pytest.fixture
-def app(repo: ProductSQLite) -> FastAPI:
+def app(repo: ReceiptSqlLite) -> FastAPI:
     app = FastAPI()
 
-    def get_test_repo() -> ProductSQLite:
+    def get_test_repo() -> ReceiptSqlLite:
         return repo
 
-    app.dependency_overrides[get_product_repository] = get_test_repo
+    app.dependency_overrides[get_receipt_repository] = get_test_repo
     app.include_router(router)
     return app
 
@@ -61,3 +60,30 @@ def test_clear_receipts(repo: ReceiptSqlLite):
     for receipt in receipts:
         with pytest.raises(DoesNotExistError):
             repo.get(receipt.id)
+
+
+# api tests
+
+def test_create_receipt_endpoint(client: TestClient) -> None:
+    response = client.post("/receipts")
+    assert response.status_code == 201
+    data = response.json()
+    assert "id" in data
+
+
+def test_get_receipt_endpoint(client: TestClient) -> None:
+    create_resp = client.post("/receipts")
+    assert create_resp.status_code == 201
+    receipt_data = create_resp.json()
+    receipt_id = receipt_data["id"]
+
+    get_resp = client.get(f"/receipts/{receipt_id}")
+    assert get_resp.status_code == 200
+    retrieved = get_resp.json()
+    assert retrieved["id"] == receipt_id
+
+
+def test_get_receipt_not_found(client: TestClient) -> None:
+    non_existent_id = str(uuid.uuid4())
+    response = client.get(f"/receipts/{non_existent_id}")
+    assert response.status_code == 404
