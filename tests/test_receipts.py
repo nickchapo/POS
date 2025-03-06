@@ -10,7 +10,7 @@ from app.infra.core.products import Product
 from app.infra.fastapi.dependables import get_receipt_repository, get_product_repository
 from app.infra.fastapi.receipts import router
 from app.infra.sqlite.products import ProductSQLite
-from app.infra.sqlite.receipt_repository import ReceiptSqlLite, Receipt
+from app.infra.sqlite.receipts import ReceiptSqlLite, Receipt
 
 
 @pytest.fixture
@@ -107,6 +107,15 @@ def test_add_nonexisting_product(receipt_repo: ReceiptSqlLite):
 
     with pytest.raises(DoesNotExistError):
         receipt_repo.add_product(receipt.id, id)
+
+def test_add_to_nonexisting_receipt(receipt_repo: ReceiptSqlLite, product_repo: ProductSQLite):
+    product = Product(id=uuid.uuid4(), name="Product", barcode="barcode", price=10.0)
+    product_repo.add(product)
+
+    nonexisting_receipt_id = uuid.uuid4()
+
+    with pytest.raises(DoesNotExistError):
+        receipt_repo.add_product(nonexisting_receipt_id, product.id)
 
 # api tests
 

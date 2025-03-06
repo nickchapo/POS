@@ -5,7 +5,7 @@ from app.infra.fastapi.products import router as product_api
 from app.infra.fastapi.shifts import router as shift_api
 from app.infra.fastapi.receipts import router as receipt_api
 from app.infra.sqlite.products import ProductSQLite
-from app.infra.sqlite.receipt_repository import ReceiptSqlLite
+from app.infra.sqlite.receipts import ReceiptSqlLite
 from app.infra.sqlite.shifts import ShiftSQLite
 
 POS_DB = "pos.db"

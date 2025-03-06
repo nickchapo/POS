@@ -66,6 +66,7 @@ class ReceiptSqlLite(ReceiptRepository):
             )
 
     def add_product(self, receipt_id: UUID, product_id: UUID) -> None:
+        self.get(receipt_id)
         self.product_repo.read(product_id)
         with self.connection:
             self.connection.execute(
