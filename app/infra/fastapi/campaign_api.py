@@ -2,24 +2,24 @@ from typing import List, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 
-from ..core.domain.response.campaign_response import campaign_response
-from ..core.domain.request.combo_campaign_request import combo_campaign_request
-from ..core.domain.request.buy_N_get_N_campaign_request import (
-    buy_N_get_N_campaign_request,
-)
-from ..core.domain.request.discount_campaign_request import discount_campaign_request
-from ..core.campaign import (
+from app.core.campaign import (
+    BuyNGetNCampaign,
     Campaign,
     CampaignType,
-    DiscountCampaign,
-    BuyNGetNCampaign,
     ComboCampaign,
+    DiscountCampaign,
 )
-from app.infra.core.service.campaign_service import CampaignService
+from app.core.domain.request.buy_N_get_N_campaign_request import (
+    buy_N_get_N_campaign_request,
+)
+from app.core.domain.request.combo_campaign_request import combo_campaign_request
+from app.core.domain.request.discount_campaign_request import discount_campaign_request
+from app.core.domain.response.campaign_response import campaign_response
+from app.core.service.campaign_service import CampaignService
+
 from ..dependencies import get_campaign_service
 
 router = APIRouter(prefix="/campaigns", tags=["campaigns"])
-
 
 CampaignRequest = Union[
     discount_campaign_request, buy_N_get_N_campaign_request, combo_campaign_request
@@ -82,10 +82,11 @@ def campaign_to_response(campaign) -> campaign_response:
 
 @router.post("", response_model=campaign_response)
 async def create_campaign(
-    campaign_request: Union[
-        discount_campaign_request, buy_N_get_N_campaign_request, combo_campaign_request
-    ],
-    campaign_service: CampaignService = Depends(get_campaign_service),
+        campaign_request: Union[
+            discount_campaign_request, buy_N_get_N_campaign_request,
+            combo_campaign_request
+        ],
+        campaign_service: CampaignService = Depends(get_campaign_service),
 ):
     try:
         campaign = request_to_campaign(campaign_request)
@@ -97,8 +98,9 @@ async def create_campaign(
 
 @router.get("", response_model=List[campaign_response])
 async def list_campaigns(
-    active_only: bool = Query(False, description="Filter for active campaigns only"),
-    campaign_service: CampaignService = Depends(get_campaign_service),
+        active_only: bool = Query(False,
+                                  description="Filter for active campaigns only"),
+        campaign_service: CampaignService = Depends(get_campaign_service),
 ):
     campaigns = campaign_service.list_campaigns(active_only=active_only)
     return [campaign_to_response(c) for c in campaigns]
@@ -106,8 +108,8 @@ async def list_campaigns(
 
 @router.get("/{campaign_id}", response_model=campaign_response)
 async def get_campaign(
-    campaign_id: int = Path(..., description="The ID of the campaign to retrieve"),
-    campaign_service: CampaignService = Depends(get_campaign_service),
+        campaign_id: int = Path(..., description="The ID of the campaign to retrieve"),
+        campaign_service: CampaignService = Depends(get_campaign_service),
 ):
     campaign = campaign_service.get_campaign(campaign_id)
     if not campaign:
@@ -117,8 +119,9 @@ async def get_campaign(
 
 @router.delete("/{campaign_id}", status_code=204)
 async def deactivate_campaign(
-    campaign_id: int = Path(..., description="The ID of the campaign to deactivate"),
-    campaign_service: CampaignService = Depends(get_campaign_service),
+        campaign_id: int = Path(...,
+                                description="The ID of the campaign to deactivate"),
+        campaign_service: CampaignService = Depends(get_campaign_service),
 ):
     success = campaign_service.deactivate_campaign(campaign_id)
     if not success:

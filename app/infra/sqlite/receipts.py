@@ -1,10 +1,10 @@
 import sqlite3
 from dataclasses import dataclass
-from typing import Optional
+from typing import List, Optional
 from uuid import UUID
 
-from app.infra.core.repository.products import Product
-from app.infra.core.repository.receipts import ReceiptRepository, Receipt
+from app.core.repository.products import Product
+from app.core.repository.receipts import Receipt, ReceiptRepository
 
 
 @dataclass
@@ -23,7 +23,9 @@ class ReceiptSqlLite(ReceiptRepository):
             self.connection.execute(
                 """
                 CREATE TABLE IF NOT EXISTS receipts (
-                    id TEXT PRIMARY KEY
+                    id TEXT PRIMARY KEY,
+                    shift_id TEXT NOT NULL,
+                    FOREIGN KEY (shift_id) REFERENCES shifts(id) ON DELETE CASCADE
                 )
                 """
             )
@@ -39,6 +41,7 @@ class ReceiptSqlLite(ReceiptRepository):
     def get(self, receipt_id: UUID) -> Receipt | None:
         query = """
         SELECT r.id AS receipt_id, 
+               r.shift_id AS shift_id, 
                p.id AS product_id, 
                p.name, 
                p.barcode, 
@@ -63,12 +66,48 @@ class ReceiptSqlLite(ReceiptRepository):
                 )
                 products.append(product)
 
-        return Receipt(id=UUID(rows[0]["receipt_id"]), products=products)
+        return Receipt(id=UUID(rows[0]["receipt_id"]),
+                       shift_id=UUID(rows[0]["shift_id"]), products=products)
+
+    def get_by_shift(self, shift_id: UUID) -> List[Receipt]:
+        query = """
+        SELECT r.id AS receipt_id, 
+               r.shift_id AS shift_id, 
+               p.id AS product_id, 
+               p.name, 
+               p.barcode, 
+               p.price
+        FROM receipts r
+        LEFT JOIN products p ON r.id = p.receipt_id
+        WHERE r.shift_id = ?
+        """
+        cursor = self.connection.execute(query, (str(shift_id),))
+        rows = cursor.fetchall()
+
+        receipts_dict = {}
+        for row in rows:
+            receipt_id = UUID(row["receipt_id"])
+            if receipt_id not in receipts_dict:
+                receipts_dict[receipt_id] = Receipt(id=receipt_id,
+                                                    shift_id=UUID(row["shift_id"]),
+                                                    products=[])
+
+            if row["product_id"] is not None:
+                product = Product(
+                    id=UUID(row["product_id"]),
+                    name=row["name"],
+                    barcode=row["barcode"],
+                    price=row["price"],
+                )
+                receipts_dict[receipt_id].products.append(product)
+
+        return list(receipts_dict.values())
 
     def add(self, receipt: Receipt) -> Receipt:
         with self.connection:
             self.connection.execute(
-                "INSERT INTO receipts (id) VALUES (?)", (str(receipt.id),)
+                "INSERT INTO receipts (id, shift_id) VALUES (?, ?)",
+                (str(receipt.id), str(receipt.shift_id))
             )
         return self.get(receipt.id)
 

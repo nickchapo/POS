@@ -1,7 +1,8 @@
 import unittest
 from unittest.mock import Mock
-from app.infra.core.campaign import DiscountCampaign
-from app.infra.core.service.campaign_service import CampaignService
+
+from app.core.campaign import DiscountCampaign
+from app.core.service.campaign_service import CampaignService
 
 
 class TestCampaignService(unittest.TestCase):

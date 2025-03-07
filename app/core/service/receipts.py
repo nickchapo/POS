@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from app.infra.core.domain.response.receipt_response import ReceiptResponse
-from app.infra.core.errors import DoesNotExistError, ExistsError
-from app.infra.core.mapper.receipt_mapper import ReceiptMapper
-from app.infra.core.repository.products import ProductRepository
-from app.infra.core.repository.receipts import ReceiptRepository, Receipt
+from app.core.domain.response.receipt_response import ReceiptResponse
+from app.core.errors import DoesNotExistError, ExistsError
+from app.core.mapper.receipt_mapper import ReceiptMapper
+from app.core.repository.products import ProductRepository
+from app.core.repository.receipts import Receipt, ReceiptRepository
 
 
 @dataclass
@@ -19,8 +19,8 @@ class ReceiptService:
             raise DoesNotExistError("Receipt", "id", str(receipt_id))
         return ReceiptMapper.to_response(receipt)
 
-    def add_receipt(self) -> ReceiptResponse:
-        receipt = Receipt()
+    def add_receipt(self, shift_id: UUID) -> ReceiptResponse:
+        receipt = Receipt(shift_id=shift_id)
         return ReceiptMapper.to_response(self.receipt_repository.add(receipt))
 
     def add_product(self, receipt_id: UUID, product_id: UUID) -> ReceiptResponse:

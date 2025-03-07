@@ -2,8 +2,8 @@ import sqlite3
 from datetime import datetime, timezone
 from uuid import UUID
 
-from app.infra.core.errors import DoesNotExistError, ShiftClosedError
-from app.infra.core.repository.shifts import ShiftRepository, Shift
+from app.core.errors import DoesNotExistError, ShiftClosedError
+from app.core.repository.shifts import Shift, ShiftRepository
 
 
 class ShiftSQLite(ShiftRepository):

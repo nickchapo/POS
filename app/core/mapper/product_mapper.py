@@ -1,5 +1,5 @@
-from app.infra.core.domain.response.product_response import ProductResponse
-from app.infra.core.repository.products import Product
+from app.core.domain.response.product_response import ProductResponse
+from app.core.repository.products import Product
 
 
 class ProductMapper:

@@ -3,10 +3,10 @@ import sqlite3
 import uvicorn
 from fastapi import FastAPI
 
+from app.infra.fastapi.campaign_api import router as campaign_api
 from app.infra.fastapi.products import router as product_api
 from app.infra.fastapi.receipts import router as receipt_api
 from app.infra.fastapi.shifts import router as shift_api
-from app.infra.fastapi.campaign_api import router as campaign_api
 from app.infra.sqlite.campaign_repository import CampaignRepository
 from app.infra.sqlite.payments import PaymentSqlLite
 from app.infra.sqlite.products import ProductSQLite

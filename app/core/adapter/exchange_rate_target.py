@@ -1,6 +1,6 @@
-from abc import abstractmethod, ABC
+from abc import ABC, abstractmethod
 
-from app.infra.core.currency import Currency
+from app.core.currency import Currency
 
 
 class ExchangeRateTarget(ABC):

@@ -2,13 +2,13 @@ from typing import Annotated, cast
 
 from fastapi import Depends, Request
 
-from app.infra.core.adapter.exchange_rate_adapter import ExchangeRateAdapter
-from app.infra.core.repository.payments import PaymentRepository
-from app.infra.core.repository.products import ProductRepository
-from app.infra.core.repository.receipts import ReceiptRepository
-from app.infra.core.repository.shifts import ShiftRepository
-from app.infra.core.service.payments import PaymentService
-from app.infra.core.service.receipts import ReceiptService
+from app.core.adapter.exchange_rate_adapter import ExchangeRateAdapter
+from app.core.repository.payments import PaymentRepository
+from app.core.repository.products import ProductRepository
+from app.core.repository.receipts import ReceiptRepository
+from app.core.repository.shifts import ShiftRepository
+from app.core.service.payments import PaymentService
+from app.core.service.receipts import ReceiptService
 
 
 def get_product_repository(request: Request) -> ProductRepository:

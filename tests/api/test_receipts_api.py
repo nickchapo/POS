@@ -5,10 +5,10 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.infra.core.service.receipts import ReceiptService
-from app.infra.fastapi.dependables import get_receipt_service, get_product_repository
-from app.infra.fastapi.receipts import router as receipts_router
+from app.core.service.receipts import ReceiptService
+from app.infra.fastapi.dependables import get_product_repository, get_receipt_service
 from app.infra.fastapi.products import router as products_router
+from app.infra.fastapi.receipts import router as receipts_router
 from app.infra.sqlite.products import ProductSQLite
 from app.infra.sqlite.receipts import ReceiptSqlLite
 
@@ -63,19 +63,22 @@ def client(app: FastAPI) -> TestClient:
 
 
 def test_create_receipt(client: TestClient) -> None:
-    response = client.post("/receipts")
+    shift_id = str(uuid.uuid4())
+    response = client.post("/receipts", json={"shift_id": shift_id})
     assert response.status_code == 201
     receipt_id = response.json().get("receipt_id")
     assert receipt_id is not None
 
 
 def test_get_receipt(client: TestClient) -> None:
-    create_response = client.post("/receipts")
+    shift_id = str(uuid.uuid4())
+    create_response = client.post("/receipts", json={"shift_id": shift_id})
     receipt_id = create_response.json()["receipt_id"]
 
     get_response = client.get(f"/receipts/{receipt_id}")
     assert get_response.status_code == 200
     assert get_response.json()["receipt_id"] == str(receipt_id)
+    assert get_response.json()["shift_id"] == shift_id
 
 
 def test_get_receipt_not_found(client: TestClient) -> None:
@@ -85,7 +88,8 @@ def test_get_receipt_not_found(client: TestClient) -> None:
 
 
 def test_add_product_to_receipt_success(client: TestClient) -> None:
-    receipt_response = client.post("/receipts")
+    shift_id = str(uuid.uuid4())
+    receipt_response = client.post("/receipts", json={"shift_id": shift_id})
     assert receipt_response.status_code == 201
     receipt_id = receipt_response.json()["receipt_id"]
 
@@ -111,6 +115,7 @@ def test_add_product_to_receipt_success(client: TestClient) -> None:
 
     updated_receipt_json = add_response_2.json()
     assert updated_receipt_json["receipt_id"] == receipt_id
+    assert updated_receipt_json["shift_id"] == shift_id
     assert "products" in updated_receipt_json
     assert len(updated_receipt_json["products"]) == 2
 
@@ -142,7 +147,8 @@ def test_add_product_to_receipt_success(client: TestClient) -> None:
 
 
 def test_add_nonexisting_product_to_receipt(client: TestClient) -> None:
-    receipt_response = client.post("/receipts")
+    shift_id = str(uuid.uuid4())
+    receipt_response = client.post("/receipts", json={"shift_id": shift_id})
     assert receipt_response.status_code == 201
     receipt_id = receipt_response.json()["receipt_id"]
 
@@ -153,7 +159,8 @@ def test_add_nonexisting_product_to_receipt(client: TestClient) -> None:
 
 
 def test_add_duplicate_product_to_receipt(client: TestClient) -> None:
-    receipt_response = client.post("/receipts")
+    shift_id = str(uuid.uuid4())
+    receipt_response = client.post("/receipts", json={"shift_id": shift_id})
     assert receipt_response.status_code == 201
     receipt_id = receipt_response.json()["receipt_id"]
 

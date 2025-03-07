@@ -1,5 +1,5 @@
-from app.infra.core.domain.response.payment_response import PaymentResponse
-from app.infra.core.repository.payments import Payment
+from app.core.domain.response.payment_response import PaymentResponse
+from app.core.repository.payments import Payment
 
 
 class PaymentMapper:

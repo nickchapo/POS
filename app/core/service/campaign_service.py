@@ -1,13 +1,8 @@
 from typing import List, Optional
-from datetime import datetime
 from uuid import UUID
 
-from app.infra.core.campaign import (
+from app.core.campaign import (
     Campaign,
-    CampaignType,
-    DiscountCampaign,
-    BuyNGetNCampaign,
-    ComboCampaign,
 )
 
 

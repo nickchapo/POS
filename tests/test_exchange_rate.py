@@ -1,7 +1,7 @@
 import pytest
 
-from app.infra.core.adapter.exchange_rate_adapter import ExchangeRateAdapter
-from app.infra.core.currency import Currency
+from app.core.adapter.exchange_rate_adapter import ExchangeRateAdapter
+from app.core.currency import Currency
 
 
 def test_get_exchange_rate_valid(monkeypatch):

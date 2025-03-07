@@ -1,12 +1,12 @@
 import unittest
 from datetime import datetime, timedelta
 
-from app.infra.core.campaign import (
-    Campaign,
-    DiscountCampaign,
+from app.core.campaign import (
     BuyNGetNCampaign,
-    ComboCampaign,
+    Campaign,
     CampaignType,
+    ComboCampaign,
+    DiscountCampaign,
 )
 
 

@@ -4,9 +4,9 @@ from datetime import datetime
 
 import pytest
 
-from app.infra.core.currency import Currency
-from app.infra.core.repository.payments import Payment
-from app.infra.core.repository.receipts import Receipt
+from app.core.currency import Currency
+from app.core.repository.payments import Payment
+from app.core.repository.receipts import Receipt
 from app.infra.sqlite.payments import PaymentSqlLite
 from app.infra.sqlite.products import ProductSQLite
 from app.infra.sqlite.receipts import ReceiptSqlLite

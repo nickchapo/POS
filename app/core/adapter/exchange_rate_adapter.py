@@ -1,6 +1,6 @@
-from app.infra.core.adapter.exchange_rate_target import ExchangeRateTarget
-from app.infra.core.currency import Currency
-from app.infra.core.api.exchange_rate_api import ExchangeRateAPI
+from app.core.adapter.exchange_rate_target import ExchangeRateTarget
+from app.core.api.exchange_rate_api import ExchangeRateAPI
+from app.core.currency import Currency
 
 
 class ExchangeRateAdapter(ExchangeRateTarget):

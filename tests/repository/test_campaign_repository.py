@@ -1,15 +1,14 @@
-import unittest
-import sqlite3
 import json
+import sqlite3
+import unittest
 from datetime import datetime, timedelta
 from uuid import UUID
 
-from app.infra.core.campaign import (
-    Campaign,
-    CampaignType,
-    DiscountCampaign,
+from app.core.campaign import (
     BuyNGetNCampaign,
+    CampaignType,
     ComboCampaign,
+    DiscountCampaign,
 )
 from app.infra.sqlite.campaign_repository import CampaignRepository
 

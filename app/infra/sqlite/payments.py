@@ -4,8 +4,8 @@ from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 
-from app.infra.core.currency import Currency
-from app.infra.core.repository.payments import Payment, PaymentRepository
+from app.core.currency import Currency
+from app.core.repository.payments import Payment, PaymentRepository
 
 
 @dataclass
