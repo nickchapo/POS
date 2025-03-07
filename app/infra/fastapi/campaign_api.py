@@ -5,6 +5,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 
+from ..core.domain.request import discount_campaign_request, buy_N_get_N_campaign_request, combo_campaign_request
 from ..core.campaign import Campaign, CampaignType, DiscountCampaign, BuyNGetNCampaign, ComboCampaign
 from ..core.campaign_service import CampaignService
 from ..dependencies import get_campaign_service
@@ -12,33 +13,11 @@ from ..dependencies import get_campaign_service
 router = APIRouter(prefix="/campaigns", tags=["campaigns"])
 
 
-class BaseCampaignRequest(BaseModel):
-    active: bool = True
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
 
 
-class DiscountCampaignRequest(BaseCampaignRequest):
-    campaign_type: str = "discount"
-    discount_percentage: float
-    product_id: Optional[UUID] = None
-    min_total: Optional[float] = None
 
 
-class BuyNGetNCampaignRequest(BaseCampaignRequest):
-    campaign_type: str = "buy_n_get_n"
-    product_id: UUID
-    buy_quantity: int
-    free_quantity: int
-
-
-class ComboCampaignRequest(BaseCampaignRequest):
-    campaign_type: str = "combo"
-    combo_products: List[UUID]
-    combo_discount: float
-
-
-CampaignRequest = Union[DiscountCampaignRequest, BuyNGetNCampaignRequest, ComboCampaignRequest]
+CampaignRequest = Union[discount_campaign_request, buy_N_get_N_campaign_request, combo_campaign_request]
 
 
 class CampaignResponse(BaseModel):
@@ -112,7 +91,7 @@ def campaign_to_response(campaign) -> CampaignResponse:
 
 @router.post("", response_model=CampaignResponse)
 async def create_campaign(
-        campaign_request: Union[DiscountCampaignRequest, BuyNGetNCampaignRequest, ComboCampaignRequest],
+        campaign_request: Union[discount_campaign_request, buy_N_get_N_campaign_request, combo_campaign_request],
         campaign_service: CampaignService = Depends(get_campaign_service)
 ):
     try:
