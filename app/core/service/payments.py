@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from app.infra.core.adapter.exchange_rate_target import ExchangeRateTarget
-from app.infra.core.currency import Currency
-from app.infra.core.domain.request.add_payment_request import AddPaymentRequest
-from app.infra.core.domain.response.payment_response import PaymentResponse
-from app.infra.core.errors import ExistsError, DoesNotExistError
-from app.infra.core.mapper.payment_mapper import PaymentMapper
-from app.infra.core.repository.payments import PaymentRepository, Payment
-from app.infra.core.service.receipts import ReceiptService
+from app.core.adapter.exchange_rate_target import ExchangeRateTarget
+from app.core.currency import Currency
+from app.core.domain.request.add_payment_request import AddPaymentRequest
+from app.core.domain.response.payment_response import PaymentResponse
+from app.core.errors import DoesNotExistError, ExistsError
+from app.core.mapper.payment_mapper import PaymentMapper
+from app.core.repository.payments import Payment, PaymentRepository
+from app.core.service.receipts import ReceiptService
 
 
 @dataclass
@@ -18,7 +18,7 @@ class PaymentService:
     payment_repository: PaymentRepository
 
     def calculate_total(
-        self, receipt_id: UUID, currency: Currency = Currency.GEL
+            self, receipt_id: UUID, currency: Currency = Currency.GEL
     ) -> PaymentResponse:
         receipt = self.receipt_service.get_receipt(receipt_id)
         if receipt is None:
@@ -48,7 +48,7 @@ class PaymentService:
         )
 
     def add_payment_to_receipt(
-        self, receipt_id: UUID, request: AddPaymentRequest
+            self, receipt_id: UUID, request: AddPaymentRequest
     ) -> PaymentResponse:
         if self.receipt_service.get_receipt(receipt_id) is None:
             raise DoesNotExistError("Receipt", "id", str(receipt_id))
@@ -61,3 +61,9 @@ class PaymentService:
         )
 
         return PaymentMapper.to_response(self.payment_repository.add(payment))
+
+    def has_payment_to_receipt(self, receipt_id: UUID) -> bool:
+        if self.receipt_service.get_receipt(receipt_id) is None:
+            raise DoesNotExistError("Receipt", "id", str(receipt_id))
+
+        return self.payment_repository.receipt_has_payment(receipt_id)

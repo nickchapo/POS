@@ -3,9 +3,9 @@ import uuid
 
 import pytest
 
-from app.infra.core.errors import DoesNotExistError
-from app.infra.core.repository.products import Product
-from app.infra.core.service.receipts import ReceiptService
+from app.core.errors import DoesNotExistError
+from app.core.repository.products import Product
+from app.core.service.receipts import ReceiptService
 from app.infra.sqlite.products import ProductSQLite
 from app.infra.sqlite.receipts import ReceiptSqlLite
 
@@ -51,7 +51,8 @@ def test_get_receipt_not_exist(receipt_service: ReceiptService):
 
 
 def test_add_receipt(receipt_service: ReceiptService):
-    receipt_response = receipt_service.add_receipt()
+    shift_id = str(uuid.uuid4())
+    receipt_response = receipt_service.add_receipt(shift_id)
     assert isinstance(receipt_response.receipt_id, uuid.UUID)
     assert receipt_response.products == []
 
@@ -59,7 +60,8 @@ def test_add_receipt(receipt_service: ReceiptService):
 def test_add_product_success(
     receipt_service: ReceiptService, product_repo: ProductSQLite
 ):
-    receipt_response = receipt_service.add_receipt()
+    shift_id = str(uuid.uuid4())
+    receipt_response = receipt_service.add_receipt(shift_id)
     receipt_id = receipt_response.receipt_id
 
     product = Product(id=uuid.uuid4(), name="Product", barcode="Barcode", price=99.99)
@@ -82,7 +84,8 @@ def test_add_product_nonexistent_receipt(
 
 
 def test_add_product_nonexistent_product(receipt_service: ReceiptService):
-    receipt_response = receipt_service.add_receipt()
+    shift_id = str(uuid.uuid4())
+    receipt_response = receipt_service.add_receipt(shift_id)
     receipt_id = receipt_response.receipt_id
 
     non_existent_product_id = uuid.uuid4()

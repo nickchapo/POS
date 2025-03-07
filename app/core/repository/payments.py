@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import List
 from uuid import UUID, uuid4
 
-from app.infra.core.currency import Currency
+from app.core.currency import Currency
 
 
 @dataclass

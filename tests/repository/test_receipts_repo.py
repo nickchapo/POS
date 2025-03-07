@@ -3,8 +3,8 @@ import uuid
 
 import pytest
 
-from app.infra.core.repository.products import Product
-from app.infra.core.repository.receipts import Receipt
+from app.core.repository.products import Product
+from app.core.repository.receipts import Receipt
 from app.infra.sqlite.products import ProductSQLite
 from app.infra.sqlite.receipts import ReceiptSqlLite
 

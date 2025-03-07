@@ -6,7 +6,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.infra.core.errors import DoesNotExistError, ShiftClosedError
+from app.core.errors import DoesNotExistError, ShiftClosedError
 from app.infra.fastapi.dependables import get_shift_repository
 from app.infra.fastapi.shifts import router
 from app.infra.sqlite.shifts import ShiftSQLite
@@ -44,9 +44,6 @@ def test_read_nonexistent_shift(repo: ShiftSQLite) -> None:
     non_existent_id = uuid.uuid4()
     with pytest.raises(DoesNotExistError):
         repo.read(non_existent_id)
-
-
-# endpoints
 
 
 @pytest.fixture

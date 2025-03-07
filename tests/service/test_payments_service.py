@@ -3,13 +3,13 @@ from unittest.mock import Mock
 
 import pytest
 
-from app.infra.core.adapter.exchange_rate_target import ExchangeRateTarget
-from app.infra.core.currency import Currency
-from app.infra.core.domain.request.add_payment_request import AddPaymentRequest
-from app.infra.core.errors import DoesNotExistError, ExistsError
-from app.infra.core.repository.payments import PaymentRepository, Payment
-from app.infra.core.service.payments import PaymentService
-from app.infra.core.service.receipts import ReceiptService
+from app.core.adapter.exchange_rate_target import ExchangeRateTarget
+from app.core.currency import Currency
+from app.core.domain.request.add_payment_request import AddPaymentRequest
+from app.core.errors import DoesNotExistError, ExistsError
+from app.core.repository.payments import Payment, PaymentRepository
+from app.core.service.payments import PaymentService
+from app.core.service.receipts import ReceiptService
 
 
 @pytest.fixture
