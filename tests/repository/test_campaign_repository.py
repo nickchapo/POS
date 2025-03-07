@@ -4,9 +4,14 @@ import json
 from datetime import datetime, timedelta
 from uuid import UUID
 
-from app.infra.core.campaign import Campaign, CampaignType, DiscountCampaign, BuyNGetNCampaign, ComboCampaign
+from app.infra.core.campaign import (
+    Campaign,
+    CampaignType,
+    DiscountCampaign,
+    BuyNGetNCampaign,
+    ComboCampaign,
+)
 from app.infra.sqlite.campaign_repository import CampaignRepository
-
 
 
 class TestCampaignRepository(unittest.TestCase):
@@ -17,18 +22,17 @@ class TestCampaignRepository(unittest.TestCase):
 
         self.discount_campaign = DiscountCampaign(
             discount_percentage=10.0,
-            product_id=UUID('00000000-0000-0000-0000-000000000001')
+            product_id=UUID("00000000-0000-0000-0000-000000000001"),
         )
 
         self.buy_n_get_n_campaign = BuyNGetNCampaign(
-            product_id=UUID('00000000-0000-0000-0000-000000000002'),
+            product_id=UUID("00000000-0000-0000-0000-000000000002"),
             buy_quantity=3,
-            free_quantity=1
+            free_quantity=1,
         )
 
         self.combo_campaign = ComboCampaign(
-            combo_products=[1, 2, 3],
-            combo_discount=15.0
+            combo_products=[1, 2, 3], combo_discount=15.0
         )
 
     def tearDown(self):
@@ -49,7 +53,9 @@ class TestCampaignRepository(unittest.TestCase):
 
         parameters = json.loads(row["parameters"])
         self.assertEqual(parameters["discount_percentage"], 10.0)
-        self.assertEqual(parameters["product_id"], '00000000-0000-0000-0000-000000000001')
+        self.assertEqual(
+            parameters["product_id"], "00000000-0000-0000-0000-000000000001"
+        )
 
     def test_save_update_campaign(self):
         campaign = self.repository.save(self.discount_campaign)
@@ -78,8 +84,7 @@ class TestCampaignRepository(unittest.TestCase):
 
         self.assertEqual(found.id, saved.id)
         self.assertEqual(found.campaign_type, CampaignType.BUY_N_GET_N)
-        self.assertEqual(found.product_id,
-                         UUID('00000000-0000-0000-0000-000000000002'))
+        self.assertEqual(found.product_id, UUID("00000000-0000-0000-0000-000000000002"))
         self.assertEqual(found.buy_quantity, 3)
         self.assertEqual(found.free_quantity, 1)
 
@@ -91,7 +96,9 @@ class TestCampaignRepository(unittest.TestCase):
 
         self.assertEqual(len(campaigns), 2)
         campaign_types = {c.campaign_type for c in campaigns}
-        self.assertEqual(campaign_types, {CampaignType.DISCOUNT, CampaignType.BUY_N_GET_N})
+        self.assertEqual(
+            campaign_types, {CampaignType.DISCOUNT, CampaignType.BUY_N_GET_N}
+        )
 
     def test_find_active(self):
         active_campaign = self.discount_campaign
@@ -123,27 +130,22 @@ class TestCampaignRepository(unittest.TestCase):
         self.assertEqual(active_campaigns[0].campaign_type, CampaignType.DISCOUNT)
 
     def test_find_active_for_product(self):
-        product_id_1 = UUID('00000000-0000-0000-0000-000000000001')
-        product_id_2 = UUID('00000000-0000-0000-0000-000000000002')
-        product_id_3 = UUID('00000000-0000-0000-0000-000000000003')
-
+        product_id_1 = UUID("00000000-0000-0000-0000-000000000001")
+        product_id_2 = UUID("00000000-0000-0000-0000-000000000002")
+        product_id_3 = UUID("00000000-0000-0000-0000-000000000003")
 
         discount_campaign = DiscountCampaign(
-            product_id=product_id_1,
-            discount_percentage=10.0
+            product_id=product_id_1, discount_percentage=10.0
         )
         self.repository.save(discount_campaign)
 
         buy_n_get_n_campaign = BuyNGetNCampaign(
-            product_id=product_id_2,
-            buy_quantity=3,
-            free_quantity=1
+            product_id=product_id_2, buy_quantity=3, free_quantity=1
         )
         self.repository.save(buy_n_get_n_campaign)
 
         combo_campaign = ComboCampaign(
-            combo_products=[product_id_1, product_id_3],
-            combo_discount=15.0
+            combo_products=[product_id_1, product_id_3], combo_discount=15.0
         )
         self.repository.save(combo_campaign)
 

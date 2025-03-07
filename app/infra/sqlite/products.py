@@ -37,8 +37,7 @@ class ProductSQLite(ProductRepository):
         with self.connection:
             with self.connection:
                 cursor = self.connection.execute(
-                    "SELECT 1 FROM products WHERE id = ?",
-                    (str(product_id),)
+                    "SELECT 1 FROM products WHERE id = ?", (str(product_id),)
                 )
                 return cursor.fetchone() is not None
 
@@ -77,7 +76,8 @@ class ProductSQLite(ProductRepository):
 
     def read_list(self) -> list[Product]:
         cursor = self.connection.execute(
-            "SELECT id, name, barcode, price FROM products")
+            "SELECT id, name, barcode, price FROM products"
+        )
         rows = cursor.fetchall()
         cursor.close()
         return [

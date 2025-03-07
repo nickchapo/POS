@@ -17,24 +17,21 @@ class PaymentResponse(BaseModel):
             self.amount = None
             self.currency = None
 
-        def with_receipt_id(self,
-                            receipt_id: UUID) -> 'PaymentResponse.Builder':
+        def with_receipt_id(self, receipt_id: UUID) -> "PaymentResponse.Builder":
             self.receipt_id = receipt_id
             return self
 
-        def with_amount(self, amount: float) -> 'PaymentResponse.Builder':
+        def with_amount(self, amount: float) -> "PaymentResponse.Builder":
             self.amount = amount
             return self
 
-        def with_currency(self, currency: Currency) -> 'PaymentResponse.Builder':
+        def with_currency(self, currency: Currency) -> "PaymentResponse.Builder":
             self.currency = currency
             return self
 
-        def build(self) -> 'PaymentResponse':
+        def build(self) -> "PaymentResponse":
             return PaymentResponse(
-                receipt_id=self.receipt_id,
-                amount=self.amount,
-                currency=self.currency
+                receipt_id=self.receipt_id, amount=self.amount, currency=self.currency
             )
 
     @classmethod

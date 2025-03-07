@@ -46,8 +46,8 @@ class PaymentSqlLite(PaymentRepository):
                     str(payment.receipt_id),
                     payment.amount,
                     payment.currency.value,
-                    payment.created_at.isoformat()
-                )
+                    payment.created_at.isoformat(),
+                ),
             )
         return self.get(payment.id)
 
@@ -79,5 +79,5 @@ class PaymentSqlLite(PaymentRepository):
             receipt_id=UUID(row["receipt_id"]),
             amount=row["amount"],
             currency=Currency(row["currency"]),
-            created_at=datetime.fromisoformat(row["created_at"])
+            created_at=datetime.fromisoformat(row["created_at"]),
         )

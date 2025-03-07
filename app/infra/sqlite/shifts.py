@@ -55,8 +55,9 @@ class ShiftSQLite(ShiftRepository):
             return Shift(
                 id=UUID(row["id"]),
                 open_at=datetime.fromisoformat(row["open_at"]),
-                closed_at=datetime.fromisoformat(row["closed_at"]) if row[
-                    "closed_at"] else None,
+                closed_at=datetime.fromisoformat(row["closed_at"])
+                if row["closed_at"]
+                else None,
             )
         else:
             raise DoesNotExistError("Shift", "id", str(shift_id))

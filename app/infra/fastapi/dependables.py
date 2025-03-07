@@ -28,23 +28,22 @@ def get_payments_repository(request: Request) -> PaymentRepository:
 
 
 def get_receipt_service(
-        receipt_repo: ReceiptRepository = Depends(get_receipt_repository),
-        product_repo: ProductRepository = Depends(get_product_repository)
+    receipt_repo: ReceiptRepository = Depends(get_receipt_repository),
+    product_repo: ProductRepository = Depends(get_product_repository),
 ) -> ReceiptService:
     return ReceiptService(
-        receipt_repository=receipt_repo,
-        product_repository=product_repo
+        receipt_repository=receipt_repo, product_repository=product_repo
     )
 
 
 def get_payment_service(
-        payment_repo: PaymentRepository = Depends(get_payments_repository),
-        receipt_service: ReceiptService = Depends(get_receipt_service)
+    payment_repo: PaymentRepository = Depends(get_payments_repository),
+    receipt_service: ReceiptService = Depends(get_receipt_service),
 ) -> PaymentService:
     return PaymentService(
         receipt_service=receipt_service,
         payment_repository=payment_repo,
-        exchange_rate_target=ExchangeRateAdapter()
+        exchange_rate_target=ExchangeRateAdapter(),
     )
 
 
@@ -58,6 +57,4 @@ ReceiptRepositoryDependable = Annotated[
     ReceiptRepository, Depends(get_receipt_repository)
 ]
 
-ReceiptServiceDependable = Annotated[
-    ReceiptRepository, Depends(get_receipt_service)
-]
+ReceiptServiceDependable = Annotated[ReceiptRepository, Depends(get_receipt_service)]

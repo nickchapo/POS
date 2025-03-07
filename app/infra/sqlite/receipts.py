@@ -32,8 +32,7 @@ class ReceiptSqlLite(ReceiptRepository):
         with self.connection:
             with self.connection:
                 cursor = self.connection.execute(
-                    "SELECT 1 FROM receipts WHERE id = ?",
-                    (str(receipt_id),)
+                    "SELECT 1 FROM receipts WHERE id = ?", (str(receipt_id),)
                 )
                 return cursor.fetchone() is not None
 
@@ -60,7 +59,7 @@ class ReceiptSqlLite(ReceiptRepository):
                     id=UUID(row["product_id"]),
                     name=row["name"],
                     barcode=row["barcode"],
-                    price=row["price"]
+                    price=row["price"],
                 )
                 products.append(product)
 
@@ -69,8 +68,7 @@ class ReceiptSqlLite(ReceiptRepository):
     def add(self, receipt: Receipt) -> Receipt:
         with self.connection:
             self.connection.execute(
-                "INSERT INTO receipts (id) VALUES (?)",
-                (str(receipt.id),)
+                "INSERT INTO receipts (id) VALUES (?)", (str(receipt.id),)
             )
         return self.get(receipt.id)
 

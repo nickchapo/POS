@@ -15,23 +15,22 @@ class ReceiptResponse(BaseModel):
             self.receipt_id = None
             self.products = []
 
-        def with_receipt_id(self, receipt_id: UUID) -> 'ReceiptResponse.Builder':
+        def with_receipt_id(self, receipt_id: UUID) -> "ReceiptResponse.Builder":
             self.receipt_id = receipt_id
             return self
 
-        def with_products(self, products: List[ProductResponse]) -> 'ReceiptResponse.Builder':
+        def with_products(
+            self, products: List[ProductResponse]
+        ) -> "ReceiptResponse.Builder":
             self.products = products
             return self
 
-        def add_product(self, product: ProductResponse) -> 'ReceiptResponse.Builder':
+        def add_product(self, product: ProductResponse) -> "ReceiptResponse.Builder":
             self.products.append(product)
             return self
 
-        def build(self) -> 'ReceiptResponse':
-            return ReceiptResponse(
-                receipt_id=self.receipt_id,
-                products=self.products
-            )
+        def build(self) -> "ReceiptResponse":
+            return ReceiptResponse(receipt_id=self.receipt_id, products=self.products)
 
     @classmethod
     def builder(cls) -> Builder:
