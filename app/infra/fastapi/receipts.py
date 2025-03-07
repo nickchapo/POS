@@ -1,44 +1,33 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 
+from app.infra.core.domain.response.receipt_response import ReceiptResponse
 from app.infra.core.errors import DoesNotExistError, ExistsError
-from app.infra.core.repository.receipts import ReceiptEntity, ReceiptRepository
-from app.infra.fastapi.dependables import get_receipt_repository
+from app.infra.core.service.receipts import ReceiptService
+from app.infra.fastapi.dependables import get_receipt_service
 
 router = APIRouter(prefix="/receipts", tags=["Receipts"])
 
 
-class ReceiptResponse(BaseModel):
-    id: UUID
-
-
-def _to_response(receipt: ReceiptEntity) -> ReceiptResponse:
-    return ReceiptResponse(
-        id=receipt.id
-    )
-
-
 @router.post("", response_model=ReceiptResponse, status_code=201)
 def create_receipt(
-        repo: ReceiptRepository = Depends(get_receipt_repository),
+        receipt_service: ReceiptService = Depends(get_receipt_service),
 ) -> ReceiptResponse:
-    receipt = ReceiptEntity()
     try:
-        repo.add(receipt)
+        response = receipt_service.add_receipt()
     except ExistsError as e:
         raise HTTPException(status_code=409, detail=str(e))
-    return _to_response(receipt)
+    return response
 
 
 @router.get("/{receipt_id}", response_model=ReceiptResponse)
 def get_receipt(
         receipt_id: UUID,
-        repo: ReceiptRepository = Depends(get_receipt_repository),
+        receipt_service: ReceiptService = Depends(get_receipt_service),
 ) -> ReceiptResponse:
     try:
-        receipt = repo.get(receipt_id)
+        response = receipt_service.get_receipt(receipt_id)
     except DoesNotExistError as e:
         raise HTTPException(status_code=404, detail=str(e))
-    return _to_response(receipt)
+    return response

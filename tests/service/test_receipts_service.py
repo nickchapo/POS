@@ -10,14 +10,14 @@ from app.infra.sqlite.products import ProductSQLite
 from app.infra.sqlite.receipts import ReceiptSqlLite
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def connection() -> sqlite3.Connection:
-    conn = sqlite3.connect(":memory:")
+    conn = sqlite3.connect(":memory:", check_same_thread=False)
     yield conn
     conn.close()
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def init_db(connection: sqlite3.Connection):
     ReceiptSqlLite(connection=connection)
     ProductSQLite(connection=connection)
@@ -65,7 +65,7 @@ def test_add_product_success(receipt_service: ReceiptService, product_repo: Prod
 
 
 def test_add_product_nonexistent_receipt(receipt_service: ReceiptService, product_repo: ProductSQLite):
-    product = Product(id=uuid.uuid4(), name="Product1", barcode="Barcode1", price=99.99)
+    product = Product(id=uuid.uuid4(), name="Product", barcode="Barcode", price=99.99)
     product_repo.add(product)
 
     non_existent_receipt_id = uuid.uuid4()

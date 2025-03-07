@@ -9,14 +9,14 @@ from app.infra.sqlite.products import ProductSQLite
 from app.infra.sqlite.receipts import ReceiptSqlLite
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def connection() -> sqlite3.Connection:
-    conn = sqlite3.connect(":memory:")
+    conn = sqlite3.connect(":memory:", check_same_thread=False)
     yield conn
     conn.close()
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def init_db(connection: sqlite3.Connection):
     ReceiptSqlLite(connection=connection)
     ProductSQLite(connection=connection)
