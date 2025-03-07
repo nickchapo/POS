@@ -1,7 +1,7 @@
 from typing import Optional
 from uuid import UUID
 
-import base_campaign_request
+from ..request.base_campaign_request import base_campaign_request
 
 
 class discount_campaign_request(base_campaign_request):

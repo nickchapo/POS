@@ -5,7 +5,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 
-from ..core.domain.response import campaign_response
+from ..core.domain.response.campaign_response import campaign_response
 from ..core.domain.request.combo_campaign_request import combo_campaign_request
 from ..core.domain.request.buy_N_get_N_campaign_request import buy_N_get_N_campaign_request
 from ..core.domain.request.discount_campaign_request import discount_campaign_request
