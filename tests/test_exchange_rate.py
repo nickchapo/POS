@@ -3,6 +3,7 @@ import pytest
 from app.infra.core.adapter.exchange_rate_adapter import ExchangeRateAdapter
 from app.infra.core.currency import Currency
 
+
 def test_get_exchange_rate_valid(monkeypatch):
     def fake_get_rate_data(base, target):
         return {"base_code": base, "target_code": target, "conversion_rate": 0.86}
@@ -14,6 +15,7 @@ def test_get_exchange_rate_valid(monkeypatch):
     assert isinstance(rate, float)
     assert rate == 0.86
 
+
 def test_get_exchange_rate_missing_rate(monkeypatch):
     def fake_get_rate_data(base, target):
         return {"base_code": base, "target_code": target}
@@ -23,6 +25,7 @@ def test_get_exchange_rate_missing_rate(monkeypatch):
 
     with pytest.raises(ValueError, match="No valid rate found"):
         adapter.get_exchange_rate(Currency.USD, Currency.EUR)
+
 
 def test_get_exchange_rate_none_rate(monkeypatch):
     def fake_get_rate_data(base, target):

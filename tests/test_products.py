@@ -37,6 +37,7 @@ def client(app: FastAPI) -> TestClient:
 
 # repo tests
 
+
 def test_product_exists_true(repo: ProductSQLite) -> None:
     product_id = uuid.uuid4()
     product = Product(id=product_id, name="Test Product", barcode="123456", price=10.0)
@@ -116,6 +117,7 @@ def test_list_and_clear_products(repo: ProductSQLite) -> None:
 
 # api tests
 
+
 def test_create_product_success(client: TestClient) -> None:
     data = {"name": "New Product", "barcode": "abc123", "price": 9.99}
     response = client.post("/products", json=data)
@@ -135,13 +137,19 @@ def test_create_product_conflict(client: TestClient) -> None:
     response = client.post("/products", json=data)
     assert response.status_code == 201
 
-    data_conflict = {"name": "Conflict Product", "barcode": "unique_barcode",
-                     "price": 29.99}
+    data_conflict = {
+        "name": "Conflict Product",
+        "barcode": "unique_barcode",
+        "price": 29.99,
+    }
     response_conflict = client.post("/products", json=data_conflict)
     assert response_conflict.status_code == 409
 
-    data_conflict_barcode = {"name": "Unique Product", "barcode": "conflict123",
-                             "price": 29.99}
+    data_conflict_barcode = {
+        "name": "Unique Product",
+        "barcode": "conflict123",
+        "price": 29.99,
+    }
     response_conflict_barcode = client.post("/products", json=data_conflict_barcode)
     assert response_conflict_barcode.status_code == 409
 
@@ -168,10 +176,12 @@ def test_get_product_not_found(client: TestClient) -> None:
 
 
 def test_list_products(client: TestClient) -> None:
-    client.post("/products",
-                json={"name": "List Product 1", "barcode": "list1", "price": 5.55})
-    client.post("/products",
-                json={"name": "List Product 2", "barcode": "list2", "price": 6.66})
+    client.post(
+        "/products", json={"name": "List Product 1", "barcode": "list1", "price": 5.55}
+    )
+    client.post(
+        "/products", json={"name": "List Product 2", "barcode": "list2", "price": 6.66}
+    )
     response = client.get("/products")
     assert response.status_code == 200
     json_data = response.json()

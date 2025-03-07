@@ -3,7 +3,6 @@ class AppError(Exception):
 
 
 class ExistsError(AppError):
-
     def __init__(self, resource: str, attribute: str, value: str) -> None:
         self.resource = resource
         self.attribute = attribute
@@ -13,7 +12,6 @@ class ExistsError(AppError):
 
 
 class DoesNotExistError(AppError):
-
     def __init__(self, resource: str, attribute: str, value: str) -> None:
         self.resource = resource
         self.attribute = attribute
@@ -23,7 +21,6 @@ class DoesNotExistError(AppError):
 
 
 class ReceiptClosedError(AppError):
-
     def __init__(self, receipt_id: str) -> None:
         self.receipt_id = receipt_id
         message = f"Receipt with id <{receipt_id}> is closed."

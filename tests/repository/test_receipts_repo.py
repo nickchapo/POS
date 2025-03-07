@@ -88,12 +88,24 @@ def test_get_with_products(receipt_repo: ReceiptSqlLite, product_repo: ProductSQ
 
     prod1 = product_map.get(product1.id)
     assert prod1 is not None, "Product1 not found in the receipt"
-    assert prod1.name == product1.name, f"Expected name {product1.name}, got {prod1.name}"
-    assert prod1.barcode == product1.barcode, f"Expected barcode {product1.barcode}, got {prod1.barcode}"
-    assert prod1.price == product1.price, f"Expected price {product1.price}, got {prod1.price}"
+    assert (
+        prod1.name == product1.name
+    ), f"Expected name {product1.name}, got {prod1.name}"
+    assert (
+        prod1.barcode == product1.barcode
+    ), f"Expected barcode {product1.barcode}, got {prod1.barcode}"
+    assert (
+        prod1.price == product1.price
+    ), f"Expected price {product1.price}, got {prod1.price}"
 
     prod2 = product_map.get(product2.id)
     assert prod2 is not None, "Product2 not found in the receipt"
-    assert prod2.name == product2.name, f"Expected name {product2.name}, got {prod2.name}"
-    assert prod2.barcode == product2.barcode, f"Expected barcode {product2.barcode}, got {prod2.barcode}"
-    assert prod2.price == product2.price, f"Expected price {product2.price}, got {prod2.price}"
+    assert (
+        prod2.name == product2.name
+    ), f"Expected name {product2.name}, got {prod2.name}"
+    assert (
+        prod2.barcode == product2.barcode
+    ), f"Expected barcode {product2.barcode}, got {prod2.barcode}"
+    assert (
+        prod2.price == product2.price
+    ), f"Expected price {product2.price}, got {prod2.price}"

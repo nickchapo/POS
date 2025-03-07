@@ -36,8 +36,12 @@ def product_repo(connection: sqlite3.Connection) -> ProductSQLite:
 
 
 @pytest.fixture
-def receipt_service(receipt_repo: ReceiptSqlLite, product_repo: ProductSQLite) -> ReceiptService:
-    return ReceiptService(receipt_repository=receipt_repo, product_repository=product_repo)
+def receipt_service(
+    receipt_repo: ReceiptSqlLite, product_repo: ProductSQLite
+) -> ReceiptService:
+    return ReceiptService(
+        receipt_repository=receipt_repo, product_repository=product_repo
+    )
 
 
 def test_get_receipt_not_exist(receipt_service: ReceiptService):
@@ -52,7 +56,9 @@ def test_add_receipt(receipt_service: ReceiptService):
     assert receipt_response.products == []
 
 
-def test_add_product_success(receipt_service: ReceiptService, product_repo: ProductSQLite):
+def test_add_product_success(
+    receipt_service: ReceiptService, product_repo: ProductSQLite
+):
     receipt_response = receipt_service.add_receipt()
     receipt_id = receipt_response.receipt_id
 
@@ -64,7 +70,9 @@ def test_add_product_success(receipt_service: ReceiptService, product_repo: Prod
     assert product.id in product_ids
 
 
-def test_add_product_nonexistent_receipt(receipt_service: ReceiptService, product_repo: ProductSQLite):
+def test_add_product_nonexistent_receipt(
+    receipt_service: ReceiptService, product_repo: ProductSQLite
+):
     product = Product(id=uuid.uuid4(), name="Product", barcode="Barcode", price=99.99)
     product_repo.add(product)
 

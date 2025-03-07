@@ -48,6 +48,7 @@ def test_read_nonexistent_shift(repo: ShiftSQLite) -> None:
 
 # endpoints
 
+
 @pytest.fixture
 def app() -> FastAPI:
     app = FastAPI()

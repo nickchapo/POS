@@ -55,7 +55,9 @@ def test_calculate_total_foreign_currency(payment_service):
     assert response.currency == Currency.USD
 
     payment_service.receipt_service.get_receipt.assert_called_once_with(receipt_id)
-    payment_service.exchange_rate_target.get_exchange_rate.assert_called_once_with(Currency.GEL, Currency.USD)
+    payment_service.exchange_rate_target.get_exchange_rate.assert_called_once_with(
+        Currency.GEL, Currency.USD
+    )
 
 
 def test_calculate_total_no_products(payment_service):
@@ -90,9 +92,7 @@ def test_add_payment_to_receipt_success(payment_service):
 
     request = AddPaymentRequest(currency=Currency.USD, amount=150.0)
     dummy_payment = Payment(
-        receipt_id=receipt_id,
-        amount=request.amount,
-        currency=request.currency
+        receipt_id=receipt_id, amount=request.amount, currency=request.currency
     )
     payment_service.payment_repository.add.return_value = dummy_payment
 
@@ -103,7 +103,9 @@ def test_add_payment_to_receipt_success(payment_service):
     assert response.currency == request.currency
 
     payment_service.receipt_service.get_receipt.assert_called_once_with(receipt_id)
-    payment_service.payment_repository.receipt_has_payment.assert_called_once_with(receipt_id)
+    payment_service.payment_repository.receipt_has_payment.assert_called_once_with(
+        receipt_id
+    )
     payment_service.payment_repository.add.assert_called_once()
 
 
@@ -132,4 +134,6 @@ def test_add_payment_to_receipt_already_exists(payment_service):
         payment_service.add_payment_to_receipt(receipt_id, request)
 
     payment_service.receipt_service.get_receipt.assert_called_once_with(receipt_id)
-    payment_service.payment_repository.receipt_has_payment.assert_called_once_with(receipt_id)
+    payment_service.payment_repository.receipt_has_payment.assert_called_once_with(
+        receipt_id
+    )

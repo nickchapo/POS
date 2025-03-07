@@ -30,9 +30,11 @@ def init_db(connection: sqlite3.Connection):
 def payment_repo(connection: sqlite3.Connection) -> PaymentSqlLite:
     return PaymentSqlLite(connection=connection)
 
+
 @pytest.fixture
 def receipt_repo(connection: sqlite3.Connection) -> ReceiptSqlLite:
     return ReceiptSqlLite(connection=connection)
+
 
 def test_add_payment(payment_repo: PaymentSqlLite):
     payment = Payment(
@@ -40,7 +42,7 @@ def test_add_payment(payment_repo: PaymentSqlLite):
         receipt_id=uuid.uuid4(),
         amount=100.0,
         currency=Currency.USD,
-        created_at=datetime.utcnow()
+        created_at=datetime.utcnow(),
     )
     added_payment = payment_repo.add(payment)
     assert added_payment.id == payment.id
@@ -62,7 +64,7 @@ def test_get_all_payments(payment_repo: PaymentSqlLite):
             receipt_id=uuid.uuid4(),
             amount=50.0,
             currency=Currency.USD,
-            created_at=datetime.now()
+            created_at=datetime.now(),
         )
         payment_repo.add(payment)
         payments.append(payment)
@@ -73,7 +75,9 @@ def test_get_all_payments(payment_repo: PaymentSqlLite):
         assert payment.id in added_ids
 
 
-def test_receipt_has_payment(payment_repo: PaymentSqlLite, receipt_repo: ReceiptSqlLite):
+def test_receipt_has_payment(
+    payment_repo: PaymentSqlLite, receipt_repo: ReceiptSqlLite
+):
     receipt = receipt_repo.add(Receipt())
     receipt_id = receipt.id
 
@@ -84,7 +88,7 @@ def test_receipt_has_payment(payment_repo: PaymentSqlLite, receipt_repo: Receipt
         receipt_id=receipt_id,
         amount=75.0,
         currency=Currency.USD,
-        created_at=datetime.now()
+        created_at=datetime.now(),
     )
     payment_repo.add(payment)
     assert payment_repo.receipt_has_payment(receipt_id) is True

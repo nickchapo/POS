@@ -25,8 +25,9 @@ def open_shift(repo: ShiftRepository = Depends(get_shift_repository)) -> ShiftRe
 
 
 @router.patch("/{shift_id}/close", response_model=ShiftResponse)
-def close_shift(shift_id: UUID,
-                repo: ShiftRepository = Depends(get_shift_repository)) -> ShiftResponse:
+def close_shift(
+    shift_id: UUID, repo: ShiftRepository = Depends(get_shift_repository)
+) -> ShiftResponse:
     try:
         repo.close_shift(shift_id)
     except DoesNotExistError as e:
@@ -38,8 +39,9 @@ def close_shift(shift_id: UUID,
 
 
 @router.get("/{shift_id}", response_model=ShiftResponse)
-def get_shift(shift_id: UUID,
-              repo: ShiftRepository = Depends(get_shift_repository)) -> ShiftResponse:
+def get_shift(
+    shift_id: UUID, repo: ShiftRepository = Depends(get_shift_repository)
+) -> ShiftResponse:
     try:
         shift = repo.read(shift_id)
     except DoesNotExistError as e:

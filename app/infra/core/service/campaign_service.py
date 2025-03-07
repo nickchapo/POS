@@ -2,7 +2,14 @@ from typing import List, Optional
 from datetime import datetime
 from uuid import UUID
 
-from app.infra.core.campaign import Campaign, CampaignType, DiscountCampaign, BuyNGetNCampaign, ComboCampaign
+from app.infra.core.campaign import (
+    Campaign,
+    CampaignType,
+    DiscountCampaign,
+    BuyNGetNCampaign,
+    ComboCampaign,
+)
+
 
 class CampaignService:
     def __init__(self, repository):

@@ -39,8 +39,12 @@ def product_repo(connection: sqlite3.Connection) -> ProductSQLite:
 
 
 @pytest.fixture
-def receipt_service(receipt_repo: ReceiptSqlLite, product_repo: ProductSQLite) -> ReceiptService:
-    return ReceiptService(receipt_repository=receipt_repo, product_repository=product_repo)
+def receipt_service(
+    receipt_repo: ReceiptSqlLite, product_repo: ProductSQLite
+) -> ReceiptService:
+    return ReceiptService(
+        receipt_repository=receipt_repo, product_repository=product_repo
+    )
 
 
 @pytest.fixture
@@ -96,9 +100,13 @@ def test_add_product_to_receipt_success(client: TestClient) -> None:
     product_id_1 = product_response_1.json()["id"]
     product_id_2 = product_response_2.json()["id"]
 
-    add_response_1 = client.post(f"/receipts/{receipt_id}/products", json={"product_id": product_id_1})
+    add_response_1 = client.post(
+        f"/receipts/{receipt_id}/products", json={"product_id": product_id_1}
+    )
     assert add_response_1.status_code == 200
-    add_response_2 = client.post(f"/receipts/{receipt_id}/products", json={"product_id": product_id_2})
+    add_response_2 = client.post(
+        f"/receipts/{receipt_id}/products", json={"product_id": product_id_2}
+    )
     assert add_response_2.status_code == 200
 
     updated_receipt_json = add_response_2.json()
@@ -106,8 +114,22 @@ def test_add_product_to_receipt_success(client: TestClient) -> None:
     assert "products" in updated_receipt_json
     assert len(updated_receipt_json["products"]) == 2
 
-    product_1 = next((prod for prod in updated_receipt_json["products"] if prod["name"] == "Product1"), None)
-    product_2 = next((prod for prod in updated_receipt_json["products"] if prod["name"] == "Product2"), None)
+    product_1 = next(
+        (
+            prod
+            for prod in updated_receipt_json["products"]
+            if prod["name"] == "Product1"
+        ),
+        None,
+    )
+    product_2 = next(
+        (
+            prod
+            for prod in updated_receipt_json["products"]
+            if prod["name"] == "Product2"
+        ),
+        None,
+    )
     assert product_1 is not None
     assert product_2 is not None
 
@@ -124,7 +146,9 @@ def test_add_nonexisting_product_to_receipt(client: TestClient) -> None:
     assert receipt_response.status_code == 201
     receipt_id = receipt_response.json()["receipt_id"]
 
-    add_response = client.post(f"/receipts/{receipt_id}/products", json={"product_id": str(uuid.uuid4())})
+    add_response = client.post(
+        f"/receipts/{receipt_id}/products", json={"product_id": str(uuid.uuid4())}
+    )
     assert add_response.status_code == 404
 
 
@@ -139,8 +163,12 @@ def test_add_duplicate_product_to_receipt(client: TestClient) -> None:
 
     product_id_1 = product_response_1.json()["id"]
 
-    add_response_1 = client.post(f"/receipts/{receipt_id}/products", json={"product_id": product_id_1})
+    add_response_1 = client.post(
+        f"/receipts/{receipt_id}/products", json={"product_id": product_id_1}
+    )
     assert add_response_1.status_code == 200
-    add_response_2 = client.post(f"/receipts/{receipt_id}/products", json={"product_id": product_id_1})
+    add_response_2 = client.post(
+        f"/receipts/{receipt_id}/products", json={"product_id": product_id_1}
+    )
     print(add_response_2.json())
     assert add_response_2.status_code == 409

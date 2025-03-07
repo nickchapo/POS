@@ -10,9 +10,7 @@ class TestCampaignService(unittest.TestCase):
         self.service = CampaignService(self.repository)
 
         self.test_campaign = DiscountCampaign(
-            id=1,
-            discount_percentage=10.0,
-            product_id=1
+            id=1, discount_percentage=10.0, product_id=1
         )
 
     def test_create_campaign(self):
@@ -75,7 +73,9 @@ class TestCampaignService(unittest.TestCase):
         self.assertEqual(result, [self.test_campaign])
 
     def test_get_active_receipt_campaigns(self):
-        self.repository.find_active_receipt_campaigns.return_value = [self.test_campaign]
+        self.repository.find_active_receipt_campaigns.return_value = [
+            self.test_campaign
+        ]
 
         result = self.service.get_active_receipt_campaigns()
 
