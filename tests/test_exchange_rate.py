@@ -1,13 +1,13 @@
 import pytest
 
-from app.infra.core.adapter.economia_exchange_rate_adapter import EconomiaExchangeRateAdapter
+from app.infra.core.adapter.exchange_rate_adapter import ExchangeRateAdapter
 from app.infra.core.currency import Currency
 
 def test_get_exchange_rate_valid(monkeypatch):
     def fake_get_rate_data(base, target):
-        return {"from": base, "to": target, "rate": 0.86}
+        return {"base_code": base, "target_code": target, "conversion_rate": 0.86}
 
-    adapter = EconomiaExchangeRateAdapter()
+    adapter = ExchangeRateAdapter()
     monkeypatch.setattr(adapter.api, "get_rate_data", fake_get_rate_data)
 
     rate = adapter.get_exchange_rate(Currency.USD, Currency.EUR)
@@ -16,9 +16,9 @@ def test_get_exchange_rate_valid(monkeypatch):
 
 def test_get_exchange_rate_missing_rate(monkeypatch):
     def fake_get_rate_data(base, target):
-        return {"from": base, "to": target}
+        return {"base_code": base, "target_code": target}
 
-    adapter = EconomiaExchangeRateAdapter()
+    adapter = ExchangeRateAdapter()
     monkeypatch.setattr(adapter.api, "get_rate_data", fake_get_rate_data)
 
     with pytest.raises(ValueError, match="No valid rate found"):
@@ -26,9 +26,9 @@ def test_get_exchange_rate_missing_rate(monkeypatch):
 
 def test_get_exchange_rate_none_rate(monkeypatch):
     def fake_get_rate_data(base, target):
-        return {"from": base, "to": target, "rate": None}
+        return {"base_code": base, "target_code": target, "conversion_rate": None}
 
-    adapter = EconomiaExchangeRateAdapter()
+    adapter = ExchangeRateAdapter()
     monkeypatch.setattr(adapter.api, "get_rate_data", fake_get_rate_data)
 
     with pytest.raises(ValueError, match="No valid rate found"):
