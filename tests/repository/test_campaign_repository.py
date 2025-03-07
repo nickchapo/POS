@@ -4,8 +4,8 @@ import json
 from datetime import datetime, timedelta
 from uuid import UUID
 
-from ..app.infra.core.campaign import Campaign, CampaignType, DiscountCampaign, BuyNGetNCampaign, ComboCampaign
-from ..app.infra.sqlite.campaign_repository   import CampaignRepository
+from app.infra.core.campaign import Campaign, CampaignType, DiscountCampaign, BuyNGetNCampaign, ComboCampaign
+from app.infra.sqlite.campaign_repository import CampaignRepository
 
 
 
