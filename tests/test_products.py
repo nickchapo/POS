@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from app.infra.core.errors import DoesNotExistError, ExistsError
-from app.infra.core.products import Product
+from app.infra.core.repository.products import Product
 from app.infra.fastapi.dependables import get_product_repository
 from app.infra.fastapi.products import router
 from app.infra.sqlite.products import ProductSQLite
@@ -36,6 +36,18 @@ def client(app: FastAPI) -> TestClient:
 
 
 # repo tests
+
+def test_product_exists_true(repo: ProductSQLite) -> None:
+    product_id = uuid.uuid4()
+    product = Product(id=product_id, name="Test Product", barcode="123456", price=10.0)
+    repo.add(product)
+    assert repo.exists(product_id) is True
+
+
+def test_product_exists_false(repo: ProductSQLite):
+    non_existing_id = uuid.uuid4()
+    assert repo.exists(non_existing_id) is False
+
 
 def test_add_and_read_product(repo: ProductSQLite) -> None:
     product_id = uuid.uuid4()
@@ -80,6 +92,14 @@ def test_update_price(repo: ProductSQLite) -> None:
     repo.update_price(product_id, new_price)
     updated_product = repo.read(product_id)
     assert updated_product.price == new_price
+
+
+def test_update_receipt_id(repo: ProductSQLite) -> None:
+    product_id = uuid.uuid4()
+    receipt_id = uuid.uuid4()
+    product = Product(id=product_id, name="Product", barcode="123", price=10.0)
+    repo.add(product)
+    repo.update_receipt_id(product_id, receipt_id)
 
 
 def test_list_and_clear_products(repo: ProductSQLite) -> None:

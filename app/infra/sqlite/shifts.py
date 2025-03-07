@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from uuid import UUID
 
 from app.infra.core.errors import DoesNotExistError, ShiftClosedError
-from app.infra.core.shifts import Shift, ShiftRepository
+from app.infra.core.repository.shifts import ShiftRepository, Shift
 
 
 class ShiftSQLite(ShiftRepository):
