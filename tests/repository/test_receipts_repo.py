@@ -51,10 +51,9 @@ def test_get_nonexistent_receipt(receipt_repo: ReceiptSqlLite):
     assert receipt is None
 
 
-def test_add_and_get_receipt(receipt_repo: ReceiptSqlLite):
+def test_add_receipt(receipt_repo: ReceiptSqlLite):
     receipt = Receipt()
-    receipt_repo.add(receipt)
-    retrieved = receipt_repo.get(receipt.id)
+    retrieved = receipt_repo.add(receipt)
     assert retrieved.id == receipt.id
 
 
@@ -68,6 +67,7 @@ def test_clear_receipts(receipt_repo: ReceiptSqlLite):
     for receipt in receipts:
         retrieved = receipt_repo.get(receipt.id)
         assert retrieved is None
+
 
 def test_get_with_products(receipt_repo: ReceiptSqlLite, product_repo: ProductSQLite):
     receipt = Receipt()

@@ -66,12 +66,13 @@ class ReceiptSqlLite(ReceiptRepository):
 
         return Receipt(id=UUID(rows[0]["receipt_id"]), products=products)
 
-    def add(self, receipt: Receipt) -> None:
+    def add(self, receipt: Receipt) -> Receipt:
         with self.connection:
             self.connection.execute(
                 "INSERT INTO receipts (id) VALUES (?)",
                 (str(receipt.id),)
             )
+        return self.get(receipt.id)
 
     def clear(self) -> None:
         with self.connection:
