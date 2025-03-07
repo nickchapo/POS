@@ -5,6 +5,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 
+from ..core.domain.response import campaign_response
 from ..core.domain.request import discount_campaign_request, buy_N_get_N_campaign_request, combo_campaign_request
 from ..core.campaign import Campaign, CampaignType, DiscountCampaign, BuyNGetNCampaign, ComboCampaign
 from ..core.campaign_service import CampaignService
@@ -20,19 +21,6 @@ router = APIRouter(prefix="/campaigns", tags=["campaigns"])
 CampaignRequest = Union[discount_campaign_request, buy_N_get_N_campaign_request, combo_campaign_request]
 
 
-class CampaignResponse(BaseModel):
-    id: int
-    campaign_type: str
-    active: bool
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
-    discount_percentage: Optional[float] = None
-    product_id: Optional[UUID] = None
-    min_total: Optional[float] = None
-    buy_quantity: Optional[int] = None
-    free_quantity: Optional[int] = None
-    combo_products: Optional[List[UUID]] = None
-    combo_discount: Optional[float] = None
 
 
 def request_to_campaign(req) -> Campaign:
@@ -65,8 +53,8 @@ def request_to_campaign(req) -> Campaign:
     raise ValueError(f"Unknown campaign type: {req.campaign_type}")
 
 
-def campaign_to_response(campaign) -> CampaignResponse:
-    response = CampaignResponse(
+def campaign_to_response(campaign) -> campaign_response:
+    response = campaign_response(
         id=campaign.id,
         campaign_type=campaign.campaign_type.value,
         active=campaign.active,
@@ -89,7 +77,7 @@ def campaign_to_response(campaign) -> CampaignResponse:
     return response
 
 
-@router.post("", response_model=CampaignResponse)
+@router.post("", response_model=campaign_response)
 async def create_campaign(
         campaign_request: Union[discount_campaign_request, buy_N_get_N_campaign_request, combo_campaign_request],
         campaign_service: CampaignService = Depends(get_campaign_service)
@@ -102,7 +90,7 @@ async def create_campaign(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.get("", response_model=List[CampaignResponse])
+@router.get("", response_model=List[campaign_response])
 async def list_campaigns(
         active_only: bool = Query(False, description="Filter for active campaigns only"),
         campaign_service: CampaignService = Depends(get_campaign_service)
@@ -111,7 +99,7 @@ async def list_campaigns(
     return [campaign_to_response(c) for c in campaigns]
 
 
-@router.get("/{campaign_id}", response_model=CampaignResponse)
+@router.get("/{campaign_id}", response_model=campaign_response)
 async def get_campaign(
         campaign_id: int = Path(..., description="The ID of the campaign to retrieve"),
         campaign_service: CampaignService = Depends(get_campaign_service)
