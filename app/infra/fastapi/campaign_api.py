@@ -1,7 +1,4 @@
-from datetime import datetime
-from typing import List, Optional, Union
-from pydantic import BaseModel, Field
-from uuid import UUID
+from typing import List, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 
@@ -10,7 +7,7 @@ from ..core.domain.request.combo_campaign_request import combo_campaign_request
 from ..core.domain.request.buy_N_get_N_campaign_request import buy_N_get_N_campaign_request
 from ..core.domain.request.discount_campaign_request import discount_campaign_request
 from ..core.campaign import Campaign, CampaignType, DiscountCampaign, BuyNGetNCampaign, ComboCampaign
-from ..core.campaign_service import CampaignService
+from app.infra.core.service.campaign_service import CampaignService
 from ..dependencies import get_campaign_service
 
 router = APIRouter(prefix="/campaigns", tags=["campaigns"])

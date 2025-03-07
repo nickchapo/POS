@@ -2,7 +2,7 @@ import sqlite3
 from fastapi import Depends
 from functools import lru_cache
 
-from .core.campaign_service import CampaignService
+from app.infra.core.service.campaign_service import CampaignService
 from .sqlite.campaign_repository import CampaignRepository
 
 
