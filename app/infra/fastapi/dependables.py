@@ -2,7 +2,7 @@ from typing import Annotated, cast
 
 from fastapi import Depends, Request
 
-from app.infra.core.adapter.economia_exchange_rate_adapter import EconomiaExchangeRateAdapter
+from app.infra.core.adapter.exchange_rate_adapter import ExchangeRateAdapter
 from app.infra.core.repository.payments import PaymentRepository
 from app.infra.core.repository.products import ProductRepository
 from app.infra.core.repository.receipts import ReceiptRepository
@@ -44,7 +44,7 @@ def get_payment_service(
     return PaymentService(
         receipt_service=receipt_service,
         payment_repository=payment_repo,
-        exchange_rate_target=EconomiaExchangeRateAdapter()
+        exchange_rate_target=ExchangeRateAdapter()
     )
 
 
